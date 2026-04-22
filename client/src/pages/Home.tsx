@@ -1,8 +1,10 @@
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, LogOut, User } from "lucide-react";
+import { getLoginUrl } from "@/const";
 
 interface QuestionsData {
   [key: string]: string[];
@@ -17,6 +19,10 @@ const categories = [
 ];
 
 export default function Home() {
+  // The userAuth hooks provides authentication state
+  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
   const [, navigate] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [questionsData, setQuestionsData] = useState<QuestionsData>({});
@@ -82,21 +88,51 @@ export default function Home() {
               <span className="text-accent">أسئلة</span> <span className="text-secondary">أركان</span>
             </h1>
           </div>
-          <div className="flex items-center gap-2">
-            <Input
-              type="text"
-              placeholder="ابحث عن سؤال..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="w-64 bg-card border-border text-foreground placeholder:text-muted-foreground"
-            />
-            <Button
-              onClick={handleSearch}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Input
+                type="text"
+                placeholder="ابحث عن سؤال..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                className="w-64 bg-card border-border text-foreground placeholder:text-muted-foreground"
+              />
+              <Button
+                onClick={handleSearch}
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Auth Section */}
+            <div className="flex items-center gap-2">
+              {isAuthenticated && user ? (
+                <>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border">
+                    <User className="h-4 w-4 text-accent" />
+                    <span className="text-sm text-foreground">{user.name || user.email}</span>
+                  </div>
+                  <Button
+                    onClick={() => logout()}
+                    variant="outline"
+                    className="border-border text-foreground hover:bg-card"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    تسجيل الخروج
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={() => (window.location.href = getLoginUrl())}
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  تسجيل الدخول
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </header>
