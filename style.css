@@ -696,6 +696,156 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/* About Button */
+.btn-about {
+    padding: 0.75rem 1.5rem;
+    background: rgba(106, 27, 154, 0.2);
+    color: var(--primary);
+    border: 1px solid rgba(106, 27, 154, 0.5);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+}
+
+.btn-about:hover {
+    background: rgba(106, 27, 154, 0.3);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(106, 27, 154, 0.3);
+}
+
+/* About Modal */
+.about-modal {
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.about-header h2 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #d4af37, #6a1b9a, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.about-body {
+    margin-bottom: 2rem;
+}
+
+.about-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.about-section:last-child {
+    border-bottom: none;
+}
+
+.about-section h3 {
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.about-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.about-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.about-list li {
+    padding: 0.5rem 0 0.5rem 2rem;
+    color: var(--text);
+    position: relative;
+}
+
+.about-list li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.about-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Rating Buttons */
+.rating-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-like, .btn-dislike, .btn-favorite {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-like:hover {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.5);
+    transform: scale(1.1);
+}
+
+.btn-dislike:hover {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: rgba(244, 67, 54, 0.5);
+    transform: scale(1.1);
+}
+
+.btn-favorite:hover {
+    background: rgba(233, 30, 99, 0.2);
+    border-color: rgba(233, 30, 99, 0.5);
+    transform: scale(1.1);
+}
+
+.btn-like.active {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: rgba(76, 175, 80, 0.8);
+}
+
+.btn-dislike.active {
+    background: rgba(244, 67, 54, 0.3);
+    border-color: rgba(244, 67, 54, 0.8);
+}
+
+.btn-favorite.active {
+    background: rgba(233, 30, 99, 0.3);
+    border-color: rgba(233, 30, 99, 0.8);
+    color: #e91e63;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header .container {

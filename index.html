@@ -25,6 +25,7 @@
                 </div>
             </div>
             <div class="header-right">
+                <button id="aboutBtn" class="btn-about">ℹ️ عن أركان</button>
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
                     <button id="searchBtn" class="search-btn">🔍</button>
@@ -136,9 +137,62 @@
             <button class="modal-close">&times;</button>
             <h3>سؤالك للتفكير</h3>
             <p id="modalQuestion"></p>
+            <div class="rating-buttons">
+                <button id="likeBtn" class="btn-like" title="إعجاب">👍</button>
+                <button id="dislikeBtn" class="btn-dislike" title="عدم إعجاب">👎</button>
+                <button id="favoriteBtn" class="btn-favorite" title="u062dفظ">♥️</button>
+            </div>
             <div class="modal-buttons">
                 <button id="anotherBtn" class="btn-primary">سؤال آخر</button>
                 <button id="closeBtn" class="btn-secondary">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal صفحة عن أركان -->
+    <div id="aboutModal" class="modal" style="display: none;">
+        <div class="modal-content about-modal">
+            <button class="modal-close" onclick="closeAbout()">&times;</button>
+            <div class="about-header">
+                <h2>عن أسئلة أركان</h2>
+            </div>
+            <div class="about-body">
+                <div class="about-section">
+                    <h3>🎯 رؤيتنا</h3>
+                    <p>نؤمن أن الأسئلة العميقة هي مفتاح الحكمة والفهم. موقع أسئلة أركان يهدف إلى توفير منصة فريدة تجمع بين الفلسفة والتفكير النقدي والاستكشاف الذاتي.</p>
+                </div>
+                <div class="about-section">
+                    <h3>💡 من هو أركان؟</h3>
+                    <p>أركان هو مرشدك في رحلة التفكير العميق. اسمه مستوحى من كلمة "أركان" التي تعني الأساس والدعامة - فهو يمثل الأساس الذي يبني عليه الإنسان فهمه للعالم والحياة.</p>
+                </div>
+                <div class="about-section">
+                    <h3>📚 محتوى الموقع</h3>
+                    <p>يحتوي الموقع على <strong>5000 سؤال فريد</strong> موزعة على 5 أقسام:</p>
+                    <ul class="about-list">
+                        <li><strong>أسئلة شخصية:</strong> تتعمق في ذاتك وهويتك وقيمك</li>
+                        <li><strong>أسئلة عامة:</strong> تستكشف معاني الحياة والوجود</li>
+                        <li><strong>أسئلة دينية:</strong> تناقش الإيمان والروحانية</li>
+                        <li><strong>أسئلة ثقافية:</strong> تعكس على الحضارة والتراث</li>
+                        <li><strong>أسئلة عن الحب:</strong> تستقصي أعمق المشاعر الإنسانية</li>
+                    </ul>
+                </div>
+                <div class="about-section">
+                    <h3>🌟 كيفية الاستفادة</h3>
+                    <p>استخدم الموقع للتأمل والتفكير العميق. اقرأ الأسئلة ببطء، فكر فيها بعناية، وحاول الإجابة بصدق. لا تتسرع - الهدف ليس الإجابة السريعة بل الفهم العميق.</p>
+                </div>
+                <div class="about-section">
+                    <h3>✨ الميزات</h3>
+                    <p>يمكنك:</p>
+                    <ul class="about-list">
+                        <li>البحث عن أسئلة محددة</li>
+                        <li>الحصول على أسئلة عشوائية</li>
+                        <li>تقييم الأسئلة (إعجاب/عدم إعجاب)</li>
+                        <li>حفظ الأسئلة المفضلة</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="about-buttons">
+                <button class="btn-primary" onclick="closeAbout()">العودة للرئيسية</button>
             </div>
         </div>
     </div>

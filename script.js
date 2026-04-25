@@ -11,6 +11,9 @@ let currentCategory = null;
 let currentPage = 1;
 const itemsPerPage = 12;
 let filteredQuestions = [];
+let currentQuestion = '';
+let ratings = JSON.parse(localStorage.getItem('ratings')) || {};
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
 // تهيئة الخلفية المتحركة
 function initCanvas() {
@@ -211,8 +214,50 @@ function renderPagination() {
 
 // عرض السؤال في نافذة منفصلة
 function showQuestionModal(question) {
+    currentQuestion = question;
     document.getElementById('modalQuestion').textContent = question;
     document.getElementById('questionModal').style.display = 'flex';
+    updateRatingButtons();
+}
+
+// دوال التقييم والمفضلة
+function rateQuestion(rating) {
+    if (!currentQuestion) return;
+    ratings[currentQuestion] = rating;
+    localStorage.setItem('ratings', JSON.stringify(ratings));
+    updateRatingButtons();
+}
+
+function toggleFavorite() {
+    if (!currentQuestion) return;
+    const index = favorites.indexOf(currentQuestion);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(currentQuestion);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    updateRatingButtons();
+}
+
+function updateRatingButtons() {
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    
+    likeBtn.classList.remove('active');
+    dislikeBtn.classList.remove('active');
+    favoriteBtn.classList.remove('active');
+    
+    if (ratings[currentQuestion] === 'like') {
+        likeBtn.classList.add('active');
+    } else if (ratings[currentQuestion] === 'dislike') {
+        dislikeBtn.classList.add('active');
+    }
+    
+    if (favorites.includes(currentQuestion)) {
+        favoriteBtn.classList.add('active');
+    }
 }
 
 // إغلاق النافذة
@@ -264,6 +309,15 @@ function performSearch(query) {
     
     currentPage = 1;
     renderQuestions();
+}
+
+// فتح/إغلاق صفحة عن أركان
+function openAbout() {
+    document.getElementById('aboutModal').style.display = 'flex';
+}
+
+function closeAbout() {
+    document.getElementById('aboutModal').style.display = 'none';
 }
 
 // إغلاق رسالة الترحيب
@@ -332,4 +386,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // زر العودة
     document.getElementById('backBtn').addEventListener('click', goHome);
+    
+    // زر About
+    document.getElementById('aboutBtn').addEventListener('click', openAbout);
+    
+    // إغلاق About عند النقر خارجها
+    document.getElementById('aboutModal').addEventListener('click', (e) => {
+        if (e.target.id === 'aboutModal') {
+            closeAbout();
+        }
+    });
+    
+    // أزرار التقييم
+    document.getElementById('likeBtn').addEventListener('click', () => rateQuestion('like'));
+    document.getElementById('dislikeBtn').addEventListener('click', () => rateQuestion('dislike'));
+    document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
 });
