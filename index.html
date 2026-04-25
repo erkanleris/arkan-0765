@@ -81,6 +81,55 @@
         </section>
     </main>
 
+    <!-- Modal رسالة الترحيب -->
+    <div id="welcomeModal" class="modal" style="display: none;">
+        <div class="modal-content welcome-modal">
+            <button class="modal-close" onclick="closeWelcome()">&times;</button>
+            <div class="welcome-header">
+                <div class="welcome-icon">✨</div>
+                <h2>أهلاً وسهلاً بك في أسئلة أركان</h2>
+            </div>
+            <div class="welcome-body">
+                <p class="welcome-greeting">السلام عليكم ورحمة الله وبركاته</p>
+                <p class="welcome-text">
+                    أنا <span class="arkan-name">أركان</span>، مرشدك في رحلة التفكير العميق والاستكشاف الفلسفي.
+                </p>
+                <p class="welcome-text">
+                    في هذا الموقع، ستجد <span class="highlight">5000 سؤال فريد</span> مصاغة بعناية لتوسيع آفاقك وتعميق تفكيرك في جوانب مختلفة من الحياة.
+                </p>
+                <div class="welcome-features">
+                    <div class="feature">
+                        <span class="feature-icon">🧠</span>
+                        <span class="feature-text">أسئلة شخصية</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🌍</span>
+                        <span class="feature-text">أسئلة عامة</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🕌</span>
+                        <span class="feature-text">أسئلة دينية</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">📚</span>
+                        <span class="feature-text">أسئلة ثقافية</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">❤️</span>
+                        <span class="feature-text">أسئلة عن الحب</span>
+                    </div>
+                </div>
+                <p class="welcome-closing">
+                    استعد لرحلة تفكير لن تنسيها، حيث كل سؤال هو بوابة نحو فهم أعمق لذاتك والعالم من حولك.
+                </p>
+                <p class="welcome-signature">✨ مع أركان، في رحلة التفكير العميق ✨</p>
+            </div>
+            <div class="welcome-buttons">
+                <button class="btn-primary" onclick="closeWelcome()">لنبدأ الرحلة</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal للأسئلة -->
     <div id="questionModal" class="modal" style="display: none;">
         <div class="modal-content">

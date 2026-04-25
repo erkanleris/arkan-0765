@@ -266,10 +266,25 @@ function performSearch(query) {
     renderQuestions();
 }
 
+// إغلاق رسالة الترحيب
+function closeWelcome() {
+    document.getElementById('welcomeModal').style.display = 'none';
+    localStorage.setItem('welcomeShown', 'true');
+}
+
+// عرض رسالة الترحيب
+function showWelcome() {
+    const welcomeShown = localStorage.getItem('welcomeShown');
+    if (!welcomeShown) {
+        document.getElementById('welcomeModal').style.display = 'flex';
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initCanvas();
     loadQuestions();
+    showWelcome();
     
     // أزرار البحث
     document.getElementById('searchBtn').addEventListener('click', () => {
