@@ -846,6 +846,170 @@ h1, h2, h3, h4, h5, h6 {
     color: #e91e63;
 }
 
+/* Favorites and Stats Buttons */
+.btn-favorites, .btn-stats {
+    padding: 0.75rem 1.5rem;
+    background: rgba(106, 27, 154, 0.2);
+    color: var(--primary);
+    border: 1px solid rgba(106, 27, 154, 0.5);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.btn-favorites:hover, .btn-stats:hover {
+    background: rgba(106, 27, 154, 0.3);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(106, 27, 154, 0.3);
+}
+
+/* Favorites Modal */
+.favorites-modal, .stats-modal, .share-modal {
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.favorites-header, .stats-header, .share-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.favorites-header h2, .stats-header h2, .share-header h2 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #d4af37, #6a1b9a, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.favorites-list {
+    margin-bottom: 2rem;
+}
+
+.favorite-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.favorite-item-text {
+    flex: 1;
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.favorite-item-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    border-radius: 0.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.favorite-item-btn:hover {
+    background: rgba(244, 67, 54, 0.3);
+    border-color: #f44336;
+}
+
+.empty-message {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Stats Modal */
+.stats-body {
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-label {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.stat-value {
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stats-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Share Modal */
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.share-btn {
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+}
+
+.share-btn.twitter:hover {
+    background: rgba(29, 161, 242, 0.2);
+    border-color: rgba(29, 161, 242, 0.5);
+}
+
+.share-btn.facebook:hover {
+    background: rgba(59, 89, 152, 0.2);
+    border-color: rgba(59, 89, 152, 0.5);
+}
+
+.share-btn.whatsapp:hover {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: rgba(37, 211, 102, 0.5);
+}
+
+.share-btn.copy:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--primary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header .container {

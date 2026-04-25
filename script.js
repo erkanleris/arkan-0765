@@ -401,4 +401,127 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('likeBtn').addEventListener('click', () => rateQuestion('like'));
     document.getElementById('dislikeBtn').addEventListener('click', () => rateQuestion('dislike'));
     document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
+    
+    // أزرار المفضلة والإحصائيات والمشاركة
+    document.getElementById('favoritesBtn').addEventListener('click', openFavorites);
+    document.getElementById('statsBtn').addEventListener('click', openStats);
+    
+    // إغلاق المفضلة والإحصائيات عند النقر خارجها
+    document.getElementById('favoritesModal').addEventListener('click', (e) => {
+        if (e.target.id === 'favoritesModal') {
+            closeFavorites();
+        }
+    });
+    
+    document.getElementById('statsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'statsModal') {
+            closeStats();
+        }
+    });
+    
+    document.getElementById('shareModal').addEventListener('click', (e) => {
+        if (e.target.id === 'shareModal') {
+            closeShare();
+        }
+    });
 });
+
+// دوال المفضلة
+function openFavorites() {
+    const favoritesModal = document.getElementById('favoritesModal');
+    const favoritesList = document.getElementById('favoritesList');
+    
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = '<p class="empty-message">لم تقم بحفظ أي أسئلة بعد</p>';
+    } else {
+        favoritesList.innerHTML = favorites.map((fav, index) => `
+            <div class="favorite-item">
+                <div class="favorite-item-text">${fav}</div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="favorite-item-btn" onclick="shareQuestion('${fav.replace(/'/g, "\\'")}')">📤 مشاركة</button>
+                    <button class="favorite-item-btn" onclick="removeFavorite(${index})">🗑️ حذف</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    favoritesModal.style.display = 'flex';
+}
+
+function closeFavorites() {
+    document.getElementById('favoritesModal').style.display = 'none';
+}
+
+function removeFavorite(index) {
+    favorites.splice(index, 1);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    openFavorites();
+}
+
+// دوال الإحصائيات
+function openStats() {
+    updateStatsDisplay();
+    document.getElementById('statsModal').style.display = 'flex';
+}
+
+function closeStats() {
+    document.getElementById('statsModal').style.display = 'none';
+}
+
+function updateStatsDisplay() {
+    const likeCount = Object.values(ratings).filter(r => r === 'like').length;
+    const dislikeCount = Object.values(ratings).filter(r => r === 'dislike').length;
+    const totalRatings = likeCount + dislikeCount;
+    const satisfactionRate = totalRatings > 0 ? Math.round((likeCount / totalRatings) * 100) : 0;
+    
+    document.getElementById('viewedCount').textContent = Object.keys(ratings).length;
+    document.getElementById('favoriteCount').textContent = favorites.length;
+    document.getElementById('likeCount').textContent = likeCount;
+    document.getElementById('dislikeCount').textContent = dislikeCount;
+    document.getElementById('satisfactionRate').textContent = satisfactionRate + '%';
+}
+
+function clearStats() {
+    if (confirm('هل أنت متأكد من رغبتك في مسح جميع الإحصائيات؟')) {
+        ratings = {};
+        favorites = [];
+        localStorage.setItem('ratings', JSON.stringify(ratings));
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateStatsDisplay();
+        alert('تم مسح جميع الإحصائيات بنجاح');
+    }
+}
+
+// دوال المشاركة
+function shareQuestion(question) {
+    currentQuestion = question;
+    document.getElementById('shareModal').style.display = 'flex';
+}
+
+function closeShare() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+function shareOnTwitter() {
+    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان`);
+    const url = `https://twitter.com/intent/tweet?text=${text}&url=https://askarkan-cqgnrdmh.manus.space`;
+    window.open(url, '_blank');
+}
+
+function shareOnFacebook() {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=https://askarkan-cqgnrdmh.manus.space&quote=${encodeURIComponent(`أسئلة أركان: "${currentQuestion}"`)}`;
+    window.open(url, '_blank');
+}
+
+function shareOnWhatsApp() {
+    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان\nhttps://askarkan-cqgnrdmh.manus.space`);
+    const url = `https://wa.me/?text=${text}`;
+    window.open(url, '_blank');
+}
+
+function copyToClipboard() {
+    const text = `أسئلة أركان: "${currentQuestion}"\n\nhttps://askarkan-cqgnrdmh.manus.space`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('تم نسخ السؤال بنجاح!');
+    });
+}

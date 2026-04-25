@@ -26,6 +26,8 @@
             </div>
             <div class="header-right">
                 <button id="aboutBtn" class="btn-about">ℹ️ عن أركان</button>
+                <button id="favoritesBtn" class="btn-favorites">❤️ المفضلة</button>
+                <button id="statsBtn" class="btn-stats">📊 الإحصائيات</button>
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
                     <button id="searchBtn" class="search-btn">🔍</button>
@@ -193,6 +195,71 @@
             </div>
             <div class="about-buttons">
                 <button class="btn-primary" onclick="closeAbout()">العودة للرئيسية</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal المفضلة -->
+    <div id="favoritesModal" class="modal" style="display: none;">
+        <div class="modal-content favorites-modal">
+            <button class="modal-close" onclick="closeFavorites()">&times;</button>
+            <div class="favorites-header">
+                <h2>❤️ الأسئلة المفضلة</h2>
+            </div>
+            <div id="favoritesList" class="favorites-list">
+                <p class="empty-message">لم تقم بحفظ أي أسئلة بعد</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal الإحصائيات -->
+    <div id="statsModal" class="modal" style="display: none;">
+        <div class="modal-content stats-modal">
+            <button class="modal-close" onclick="closeStats()">&times;</button>
+            <div class="stats-header">
+                <h2>📊 إحصائياتي</h2>
+            </div>
+            <div class="stats-body">
+                <div class="stat-item">
+                    <span class="stat-label">عدد الأسئلة المشاهدة:</span>
+                    <span class="stat-value" id="viewedCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">عدد الأسئلة المفضلة:</span>
+                    <span class="stat-value" id="favoriteCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">عدد الإعجابات:</span>
+                    <span class="stat-value" id="likeCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">عدد عدم الإعجابات:</span>
+                    <span class="stat-value" id="dislikeCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">نسبة الرضا:</span>
+                    <span class="stat-value" id="satisfactionRate">0%</span>
+                </div>
+            </div>
+            <div class="stats-buttons">
+                <button class="btn-primary" onclick="clearStats()">مسح الإحصائيات</button>
+                <button class="btn-secondary" onclick="closeStats()">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal" style="display: none;">
+        <div class="modal-content share-modal">
+            <button class="modal-close" onclick="closeShare()">&times;</button>
+            <div class="share-header">
+                <h2>📄 مشاركة السؤال</h2>
+            </div>
+            <div class="share-buttons">
+                <button class="share-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
+                <button class="share-btn facebook" onclick="shareOnFacebook()">📁 Facebook</button>
+                <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">📱 WhatsApp</button>
+                <button class="share-btn copy" onclick="copyToClipboard()">📋 نسخ</button>
             </div>
         </div>
     </div>
