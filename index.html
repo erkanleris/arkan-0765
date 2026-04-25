@@ -26,6 +26,8 @@
             </div>
             <div class="header-right">
                 <button id="aboutBtn" class="btn-about">ℹ️ عن أركان</button>
+                <button id="categoriesBtn" class="btn-categories">🏷️ التصنيفات</button>
+                <button id="dailyBtn" class="btn-daily">📅 السؤال اليومي</button>
                 <button id="favoritesBtn" class="btn-favorites">❤️ المفضلة</button>
                 <button id="statsBtn" class="btn-stats">📊 الإحصائيات</button>
                 <div class="search-bar">
@@ -260,6 +262,52 @@
                 <button class="share-btn facebook" onclick="shareOnFacebook()">📁 Facebook</button>
                 <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">📱 WhatsApp</button>
                 <button class="share-btn copy" onclick="copyToClipboard()">📋 نسخ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Modal -->
+    <div id="categoriesModal" class="modal" style="display: none;">
+        <div class="modal-content categories-modal">
+            <button class="modal-close" onclick="closeCategories()">&times;</button>
+            <div class="modal-header">
+                <h2>🏷️ التصنيفات المتقدمة</h2>
+            </div>
+            <div id="categoriesList" class="categories-list"></div>
+        </div>
+    </div>
+
+    <!-- Daily Question Modal -->
+    <div id="dailyModal" class="modal" style="display: none;">
+        <div class="modal-content daily-modal">
+            <button class="modal-close" onclick="closeDaily()">&times;</button>
+            <div class="modal-header">
+                <h2>📅 السؤال اليومي</h2>
+                <p class="daily-date" id="dailyDate"></p>
+            </div>
+            <div class="daily-question-container">
+                <div class="daily-question" id="dailyQuestion"></div>
+                <div class="daily-actions">
+                    <button class="daily-btn" onclick="toggleDailyFavorite()">❤️ حفظ</button>
+                    <button class="daily-btn" onclick="shareDailyQuestion()">📤 مشاركة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Modal -->
+    <div id="commentsModal" class="modal" style="display: none;">
+        <div class="modal-content comments-modal">
+            <button class="modal-close" onclick="closeComments()">&times;</button>
+            <div class="modal-header">
+                <h2>💬 التعليقات والنقاش</h2>
+            </div>
+            <div class="comments-container">
+                <div class="add-comment">
+                    <textarea id="commentInput" placeholder="أضف تعليقك هنا..."></textarea>
+                    <button onclick="addComment()" class="btn-add-comment">إرسال التعليق</button>
+                </div>
+                <div id="commentsList" class="comments-list"></div>
             </div>
         </div>
     </div>

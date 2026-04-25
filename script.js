@@ -525,3 +525,216 @@ function copyToClipboard() {
         alert('تم نسخ السؤال بنجاح!');
     });
 }
+
+
+// متغيرات للتصنيفات والسؤال اليومي والتعليقات
+const subcategories = {
+    personal: ['فلسفية', 'نفسية', 'اجتماعية', 'روحية'],
+    general: ['فلسفية', 'علمية', 'اجتماعية', 'أخلاقية'],
+    religious: ['عقائدية', 'أخلاقية', 'روحية', 'فقهية'],
+    cultural: ['فنية', 'أدبية', 'تاريخية', 'حضارية'],
+    love: ['عاطفية', 'نفسية', 'اجتماعية', 'فلسفية']
+};
+
+let comments = JSON.parse(localStorage.getItem('comments')) || {};
+let dailyQuestion = null;
+
+// دوال التصنيفات
+function openCategories() {
+    const categoriesModal = document.getElementById('categoriesModal');
+    const categoriesList = document.getElementById('categoriesList');
+    
+    categoriesList.innerHTML = Object.entries(questionsData).map(([category, questions]) => `
+        <div class="category-item" onclick="showCategorySubcategories('${category}')">
+            <div class="category-item-icon">${getCategoryIcon(category)}</div>
+            <div class="category-item-name">${getCategoryName(category)}</div>
+            <div class="category-item-count">${questions.length} سؤال</div>
+        </div>
+    `).join('');
+    
+    categoriesModal.style.display = 'flex';
+}
+
+function closeCategories() {
+    document.getElementById('categoriesModal').style.display = 'none';
+}
+
+function getCategoryIcon(category) {
+    const icons = {
+        personal: '🧠',
+        general: '🌍',
+        religious: '🕌',
+        cultural: '🎭',
+        love: '💕'
+    };
+    return icons[category] || '❓';
+}
+
+function getCategoryName(category) {
+    const names = {
+        personal: 'أسئلة شخصية',
+        general: 'أسئلة عامة',
+        religious: 'أسئلة دينية',
+        cultural: 'أسئلة ثقافية',
+        love: 'أسئلة عن الحب'
+    };
+    return names[category] || category;
+}
+
+function showCategorySubcategories(category) {
+    // يمكن إضافة عرض التصنيفات الفرعية هنا
+    alert(`تم اختيار: ${getCategoryName(category)}`);
+}
+
+// دوال السؤال اليومي
+function openDaily() {
+    const today = new Date().toDateString();
+    const storedDaily = JSON.parse(localStorage.getItem('dailyQuestion')) || {};
+    
+    if (storedDaily.date !== today) {
+        // اختيار سؤال عشوائي جديد
+        const allQuestions = Object.values(questionsData).flat();
+        dailyQuestion = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+        localStorage.setItem('dailyQuestion', JSON.stringify({
+            question: dailyQuestion,
+            date: today
+        }));
+    } else {
+        dailyQuestion = storedDaily.question;
+    }
+    
+    document.getElementById('dailyQuestion').textContent = dailyQuestion;
+    document.getElementById('dailyDate').textContent = `اليوم: ${today}`;
+    document.getElementById('dailyModal').style.display = 'flex';
+}
+
+function closeDaily() {
+    document.getElementById('dailyModal').style.display = 'none';
+}
+
+function toggleDailyFavorite() {
+    if (dailyQuestion && !favorites.includes(dailyQuestion)) {
+        favorites.push(dailyQuestion);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        alert('تم حفظ السؤال في المفضلة!');
+    } else {
+        alert('السؤال محفوظ بالفعل في المفضلة');
+    }
+}
+
+function shareDailyQuestion() {
+    if (dailyQuestion) {
+        shareQuestion(dailyQuestion);
+    }
+}
+
+// دوال التعليقات
+function openComments() {
+    const commentsModal = document.getElementById('commentsModal');
+    const commentsList = document.getElementById('commentsList');
+    
+    if (!currentQuestion) {
+        alert('يرجى اختيار سؤال أولاً');
+        return;
+    }
+    
+    if (!comments[currentQuestion]) {
+        comments[currentQuestion] = [];
+    }
+    
+    if (comments[currentQuestion].length === 0) {
+        commentsList.innerHTML = '<p class="empty-message">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+    } else {
+        commentsList.innerHTML = comments[currentQuestion].map((comment, index) => `
+            <div class="comment-item">
+                <div class="comment-author">${comment.author}</div>
+                <div class="comment-text">${comment.text}</div>
+                <div class="comment-time">${comment.time}</div>
+                <button onclick="deleteComment('${currentQuestion}', ${index})" style="margin-top: 0.5rem; padding: 0.3rem 0.8rem; background: #d32f2f; color: white; border: none; border-radius: 4px; cursor: pointer;">حذف</button>
+            </div>
+        `).join('');
+    }
+    
+    commentsModal.style.display = 'flex';
+}
+
+function closeComments() {
+    document.getElementById('commentsModal').style.display = 'none';
+}
+
+function addComment() {
+    const commentInput = document.getElementById('commentInput');
+    const text = commentInput.value.trim();
+    
+    if (!text) {
+        alert('يرجى كتابة تعليق');
+        return;
+    }
+    
+    if (!comments[currentQuestion]) {
+        comments[currentQuestion] = [];
+    }
+    
+    const comment = {
+        author: 'زائر',
+        text: text,
+        time: new Date().toLocaleString('ar-SA')
+    };
+    
+    comments[currentQuestion].push(comment);
+    localStorage.setItem('comments', JSON.stringify(comments));
+    commentInput.value = '';
+    
+    openComments();
+}
+
+function deleteComment(question, index) {
+    if (confirm('هل تريد حذف هذا التعليق؟')) {
+        comments[question].splice(index, 1);
+        localStorage.setItem('comments', JSON.stringify(comments));
+        openComments();
+    }
+}
+
+// إضافة event listeners للأزرار الجديدة
+document.addEventListener('DOMContentLoaded', () => {
+    const categoriesBtn = document.getElementById('categoriesBtn');
+    const dailyBtn = document.getElementById('dailyBtn');
+    
+    if (categoriesBtn) {
+        categoriesBtn.addEventListener('click', openCategories);
+    }
+    
+    if (dailyBtn) {
+        dailyBtn.addEventListener('click', openDaily);
+    }
+    
+    // إغلاق الـ modals عند النقر خارجها
+    document.getElementById('categoriesModal').addEventListener('click', (e) => {
+        if (e.target.id === 'categoriesModal') closeCategories();
+    });
+    
+    document.getElementById('dailyModal').addEventListener('click', (e) => {
+        if (e.target.id === 'dailyModal') closeDaily();
+    });
+    
+    document.getElementById('commentsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'commentsModal') closeComments();
+    });
+});
+
+// إضافة زر التعليقات في modal الأسئلة
+function addCommentsButtonToQuestion() {
+    const questionModal = document.getElementById('questionModal');
+    if (questionModal && !document.getElementById('commentsBtn')) {
+        const actionsDiv = questionModal.querySelector('.question-actions');
+        if (actionsDiv) {
+            const commentsBtn = document.createElement('button');
+            commentsBtn.id = 'commentsBtn';
+            commentsBtn.className = 'question-action-btn';
+            commentsBtn.textContent = '💬 التعليقات';
+            commentsBtn.onclick = openComments;
+            actionsDiv.appendChild(commentsBtn);
+        }
+    }
+}
