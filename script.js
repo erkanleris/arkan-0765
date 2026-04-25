@@ -738,3 +738,34 @@ function addCommentsButtonToQuestion() {
         }
     }
 }
+
+
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            mobileMenu.style.display = mobileMenu.classList.contains('active') ? 'flex' : 'none';
+        });
+    }
+
+    // Close menu when clicking a button
+    const mobileMenuButtons = mobileMenu.querySelectorAll('button');
+    mobileMenuButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            mobileMenu.style.display = 'none';
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.header-right') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
+            mobileMenu.style.display = 'none';
+        }
+    });
+});
