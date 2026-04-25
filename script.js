@@ -11,6 +11,9 @@ let currentCategory = null;
 let currentPage = 1;
 const itemsPerPage = 12;
 let filteredQuestions = [];
+let currentQuestion = '';
+let ratings = JSON.parse(localStorage.getItem('ratings')) || {};
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
 // تهيئة الخلفية المتحركة
 function initCanvas() {
@@ -211,8 +214,50 @@ function renderPagination() {
 
 // عرض السؤال في نافذة منفصلة
 function showQuestionModal(question) {
+    currentQuestion = question;
     document.getElementById('modalQuestion').textContent = question;
     document.getElementById('questionModal').style.display = 'flex';
+    updateRatingButtons();
+}
+
+// دوال التقييم والمفضلة
+function rateQuestion(rating) {
+    if (!currentQuestion) return;
+    ratings[currentQuestion] = rating;
+    localStorage.setItem('ratings', JSON.stringify(ratings));
+    updateRatingButtons();
+}
+
+function toggleFavorite() {
+    if (!currentQuestion) return;
+    const index = favorites.indexOf(currentQuestion);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.push(currentQuestion);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    updateRatingButtons();
+}
+
+function updateRatingButtons() {
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    
+    likeBtn.classList.remove('active');
+    dislikeBtn.classList.remove('active');
+    favoriteBtn.classList.remove('active');
+    
+    if (ratings[currentQuestion] === 'like') {
+        likeBtn.classList.add('active');
+    } else if (ratings[currentQuestion] === 'dislike') {
+        dislikeBtn.classList.add('active');
+    }
+    
+    if (favorites.includes(currentQuestion)) {
+        favoriteBtn.classList.add('active');
+    }
 }
 
 // إغلاق النافذة
@@ -266,10 +311,34 @@ function performSearch(query) {
     renderQuestions();
 }
 
+// فتح/إغلاق صفحة عن أركان
+function openAbout() {
+    document.getElementById('aboutModal').style.display = 'flex';
+}
+
+function closeAbout() {
+    document.getElementById('aboutModal').style.display = 'none';
+}
+
+// إغلاق رسالة الترحيب
+function closeWelcome() {
+    document.getElementById('welcomeModal').style.display = 'none';
+    localStorage.setItem('welcomeShown', 'true');
+}
+
+// عرض رسالة الترحيب
+function showWelcome() {
+    const welcomeShown = localStorage.getItem('welcomeShown');
+    if (!welcomeShown) {
+        document.getElementById('welcomeModal').style.display = 'flex';
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     initCanvas();
     loadQuestions();
+    showWelcome();
     
     // أزرار البحث
     document.getElementById('searchBtn').addEventListener('click', () => {
@@ -317,4 +386,142 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // زر العودة
     document.getElementById('backBtn').addEventListener('click', goHome);
+    
+    // زر About
+    document.getElementById('aboutBtn').addEventListener('click', openAbout);
+    
+    // إغلاق About عند النقر خارجها
+    document.getElementById('aboutModal').addEventListener('click', (e) => {
+        if (e.target.id === 'aboutModal') {
+            closeAbout();
+        }
+    });
+    
+    // أزرار التقييم
+    document.getElementById('likeBtn').addEventListener('click', () => rateQuestion('like'));
+    document.getElementById('dislikeBtn').addEventListener('click', () => rateQuestion('dislike'));
+    document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
+    
+    // أزرار المفضلة والإحصائيات والمشاركة
+    document.getElementById('favoritesBtn').addEventListener('click', openFavorites);
+    document.getElementById('statsBtn').addEventListener('click', openStats);
+    
+    // إغلاق المفضلة والإحصائيات عند النقر خارجها
+    document.getElementById('favoritesModal').addEventListener('click', (e) => {
+        if (e.target.id === 'favoritesModal') {
+            closeFavorites();
+        }
+    });
+    
+    document.getElementById('statsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'statsModal') {
+            closeStats();
+        }
+    });
+    
+    document.getElementById('shareModal').addEventListener('click', (e) => {
+        if (e.target.id === 'shareModal') {
+            closeShare();
+        }
+    });
 });
+
+// دوال المفضلة
+function openFavorites() {
+    const favoritesModal = document.getElementById('favoritesModal');
+    const favoritesList = document.getElementById('favoritesList');
+    
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = '<p class="empty-message">لم تقم بحفظ أي أسئلة بعد</p>';
+    } else {
+        favoritesList.innerHTML = favorites.map((fav, index) => `
+            <div class="favorite-item">
+                <div class="favorite-item-text">${fav}</div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="favorite-item-btn" onclick="shareQuestion('${fav.replace(/'/g, "\\'")}')">📤 مشاركة</button>
+                    <button class="favorite-item-btn" onclick="removeFavorite(${index})">🗑️ حذف</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    favoritesModal.style.display = 'flex';
+}
+
+function closeFavorites() {
+    document.getElementById('favoritesModal').style.display = 'none';
+}
+
+function removeFavorite(index) {
+    favorites.splice(index, 1);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    openFavorites();
+}
+
+// دوال الإحصائيات
+function openStats() {
+    updateStatsDisplay();
+    document.getElementById('statsModal').style.display = 'flex';
+}
+
+function closeStats() {
+    document.getElementById('statsModal').style.display = 'none';
+}
+
+function updateStatsDisplay() {
+    const likeCount = Object.values(ratings).filter(r => r === 'like').length;
+    const dislikeCount = Object.values(ratings).filter(r => r === 'dislike').length;
+    const totalRatings = likeCount + dislikeCount;
+    const satisfactionRate = totalRatings > 0 ? Math.round((likeCount / totalRatings) * 100) : 0;
+    
+    document.getElementById('viewedCount').textContent = Object.keys(ratings).length;
+    document.getElementById('favoriteCount').textContent = favorites.length;
+    document.getElementById('likeCount').textContent = likeCount;
+    document.getElementById('dislikeCount').textContent = dislikeCount;
+    document.getElementById('satisfactionRate').textContent = satisfactionRate + '%';
+}
+
+function clearStats() {
+    if (confirm('هل أنت متأكد من رغبتك في مسح جميع الإحصائيات؟')) {
+        ratings = {};
+        favorites = [];
+        localStorage.setItem('ratings', JSON.stringify(ratings));
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateStatsDisplay();
+        alert('تم مسح جميع الإحصائيات بنجاح');
+    }
+}
+
+// دوال المشاركة
+function shareQuestion(question) {
+    currentQuestion = question;
+    document.getElementById('shareModal').style.display = 'flex';
+}
+
+function closeShare() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+function shareOnTwitter() {
+    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان`);
+    const url = `https://twitter.com/intent/tweet?text=${text}&url=https://askarkan-cqgnrdmh.manus.space`;
+    window.open(url, '_blank');
+}
+
+function shareOnFacebook() {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=https://askarkan-cqgnrdmh.manus.space&quote=${encodeURIComponent(`أسئلة أركان: "${currentQuestion}"`)}`;
+    window.open(url, '_blank');
+}
+
+function shareOnWhatsApp() {
+    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان\nhttps://askarkan-cqgnrdmh.manus.space`);
+    const url = `https://wa.me/?text=${text}`;
+    window.open(url, '_blank');
+}
+
+function copyToClipboard() {
+    const text = `أسئلة أركان: "${currentQuestion}"\n\nhttps://askarkan-cqgnrdmh.manus.space`;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('تم نسخ السؤال بنجاح!');
+    });
+}
