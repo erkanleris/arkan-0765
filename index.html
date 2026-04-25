@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="أسئلة أركان - 5000 سؤال عميق وفلسفي لتوسيع آفاقك الفكرية">
+    <meta name="keywords" content="أسئلة, فلسفة, تفكير, أركان">
+    <title>أسئلة أركان - عالم التفكير العميق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app"></div>
+
+    <!-- Canvas للخلفية المتحركة -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="sparkles">✨</span>
+                    <h1>أسئلة أركان</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
+                    <button id="searchBtn" class="search-btn">🔍</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h2>أهلاً بك في عالم التفكير العميق</h2>
+            <p>استكشف آلاف الأسئلة التي ستغير نظرتك للأشياء وتوسع آفاقك الفكرية والفلسفية</p>
+            <button id="randomBtn" class="btn-primary">
+                <span>✨</span> سؤال عشوائي من كل الأقسام
+            </button>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories">
+            <h3>استكشف الأقسام الخمسة</h3>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- يتم ملؤها بـ JavaScript -->
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section class="info-section">
+            <h3>5000 سؤال عميق ومميز</h3>
+            <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، كل سؤال مصاغ بعناية ليكون عميقاً وفلسفياً ويدفعك للتفكير الحقيقي.</p>
+            <div class="stats-grid" id="statsGrid">
+                <!-- يتم ملؤها بـ JavaScript -->
+            </div>
+        </section>
+
+        <!-- Questions Section -->
+        <section id="questionsSection" class="questions-section" style="display: none;">
+            <div class="questions-header">
+                <button id="backBtn" class="btn-back">← العودة للرئيسية</button>
+                <h2 id="categoryTitle"></h2>
+                <button id="randomCategoryBtn" class="btn-primary">سؤال عشوائي</button>
+            </div>
+            <div class="search-bar-category">
+                <input type="text" id="categorySearchInput" placeholder="ابحث في هذا القسم..." class="search-input">
+                <button id="categorySearchBtn" class="search-btn">🔍</button>
+            </div>
+            <div class="questions-grid" id="questionsGrid">
+                <!-- يتم ملؤها بـ JavaScript -->
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- يتم ملؤها بـ JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal للأسئلة -->
+    <div id="questionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h3>سؤالك للتفكير</h3>
+            <p id="modalQuestion"></p>
+            <div class="modal-buttons">
+                <button id="anotherBtn" class="btn-primary">سؤال آخر</button>
+                <button id="closeBtn" class="btn-secondary">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="questions-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
