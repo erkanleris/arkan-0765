@@ -1034,12 +1034,12 @@ function updateActiveUsersCount() {
     // حفظ في localStorage
     localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
     
-    // حساب عدد المستخدمين النشطين (بين 1 و 729)
-    const activeCount = Object.keys(activeUsers).length;
-    const displayCount = Math.min(Math.max(activeCount, 1), 729);
+    // حساب عدد المستخدمين النشطين (بين 284 و 828)
+    // عدد عشوائي يتغير كل 3 ثوانٍ
+    const randomCount = Math.floor(Math.random() * (828 - 284 + 1)) + 284;
     
     // تحديث العداد في الواجهة
-    updateCounterDisplay(displayCount);
+    updateCounterDisplay(randomCount);
 }
 
 // تحديث عرض العداد
