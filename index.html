@@ -140,15 +140,38 @@
 
     <!-- Modal للأسئلة -->
     <div id="questionModal" class="modal" style="display: none;">
-        <div class="modal-content">
+        <div class="modal-content question-modal-extended">
             <button class="modal-close">&times;</button>
             <h3>سؤالك للتفكير</h3>
             <p id="modalQuestion"></p>
             <div class="rating-buttons">
                 <button id="likeBtn" class="btn-like" title="إعجاب">👍</button>
                 <button id="dislikeBtn" class="btn-dislike" title="عدم إعجاب">👎</button>
-                <button id="favoriteBtn" class="btn-favorite" title="u062dفظ">♥️</button>
+                <button id="favoriteBtn" class="btn-favorite" title="حفظ">♥️</button>
             </div>
+            
+            <!-- قسم التعليقات -->
+            <div class="comments-section">
+                <div class="comments-header">
+                    <h4>💬 التعليقات المجتمعية</h4>
+                    <span class="comments-count" id="commentsCount">0</span>
+                </div>
+                
+                <!-- نموذج إضافة تعليق -->
+                <div class="add-comment-form">
+                    <textarea id="commentInput" placeholder="شارك رأيك أو تأملك على هذا السؤال..." class="comment-input" maxlength="500"></textarea>
+                    <div class="comment-form-footer">
+                        <span class="char-count"><span id="charCount">0</span>/500</span>
+                        <button id="submitCommentBtn" class="btn-submit-comment">إرسال التعليق</button>
+                    </div>
+                </div>
+                
+                <!-- قائمة التعليقات -->
+                <div id="commentsList" class="comments-list">
+                    <p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق!</p>
+                </div>
+            </div>
+            
             <div class="modal-buttons">
                 <button id="anotherBtn" class="btn-primary">سؤال آخر</button>
                 <button id="closeBtn" class="btn-secondary">إغلاق</button>

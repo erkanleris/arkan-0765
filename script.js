@@ -769,3 +769,228 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// ===== نظام التعليقات المجتمعي المتقدم =====
+
+// متغيرات التعليقات
+let allComments = JSON.parse(localStorage.getItem('allComments')) || {};
+let userIds = JSON.parse(localStorage.getItem('userIds')) || {};
+
+// إنشاء معرّف فريد للمستخدم
+function getUserId() {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('userId', userId);
+    }
+    return userId;
+}
+
+// إنشاء اسم مستخدم مجهول
+function generateAnonymousName() {
+    const adjectives = ['ذكي', 'حكيم', 'متأمل', 'فضولي', 'عميق', 'مبدع', 'متفتح', 'هادئ', 'نشيط', 'ودود'];
+    const nouns = ['المفكر', 'الفيلسوف', 'الحالم', 'الباحث', 'الراوي', 'الناقد', 'الشاعر', 'الحكيم', 'المستكشف', 'الصديق'];
+    const number = Math.floor(Math.random() * 1000) + 1;
+    
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    
+    return `${adj} ${noun} #${number}`;
+}
+
+// الحصول على اسم المستخدم أو إنشاء واحد جديد
+function getUserName() {
+    const userId = getUserId();
+    if (!userIds[userId]) {
+        userIds[userId] = generateAnonymousName();
+        localStorage.setItem('userIds', JSON.stringify(userIds));
+    }
+    return userIds[userId];
+}
+
+// إضافة تعليق جديد
+function addNewComment() {
+    const commentInput = document.getElementById('commentInput');
+    const text = commentInput.value.trim();
+    
+    if (!text) {
+        alert('يرجى كتابة تعليق');
+        return;
+    }
+    
+    if (!currentQuestion) {
+        alert('يرجى اختيار سؤال أولاً');
+        return;
+    }
+    
+    if (!allComments[currentQuestion]) {
+        allComments[currentQuestion] = [];
+    }
+    
+    const comment = {
+        id: 'comment_' + Math.random().toString(36).substr(2, 9),
+        userId: getUserId(),
+        userName: getUserName(),
+        text: text,
+        timestamp: new Date().getTime(),
+        likes: 0,
+        liked: false,
+        replies: []
+    };
+    
+    allComments[currentQuestion].unshift(comment); // إضافة في البداية
+    localStorage.setItem('allComments', JSON.stringify(allComments));
+    
+    commentInput.value = '';
+    document.getElementById('charCount').textContent = '0';
+    
+    renderComments();
+}
+
+// عرض التعليقات
+function renderComments() {
+    const commentsList = document.getElementById('commentsList');
+    const commentsCount = document.getElementById('commentsCount');
+    
+    if (!currentQuestion || !allComments[currentQuestion] || allComments[currentQuestion].length === 0) {
+        commentsList.innerHTML = '<p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
+        commentsCount.textContent = '0';
+        return;
+    }
+    
+    const questionComments = allComments[currentQuestion];
+    commentsCount.textContent = questionComments.length;
+    
+    commentsList.innerHTML = questionComments.map(comment => {
+        const date = new Date(comment.timestamp);
+        const timeStr = formatCommentTime(date);
+        const userInitial = comment.userName.charAt(0);
+        const isUserComment = comment.userId === getUserId();
+        
+        return `
+            <div class="comment-item" data-comment-id="${comment.id}">
+                <div class="comment-header">
+                    <div class="comment-user">
+                        <div class="comment-avatar">${userInitial}</div>
+                        <div>
+                            <div class="comment-username">${comment.userName}</div>
+                            <div class="comment-time">${timeStr}</div>
+                        </div>
+                    </div>
+                    ${isUserComment ? `<button class="comment-action-btn delete-btn" onclick="deleteComment('${comment.id}')">🗑️</button>` : ''}
+                </div>
+                <div class="comment-text">${escapeHtml(comment.text)}</div>
+                <div class="comment-actions">
+                    <button class="comment-action-btn like-btn ${comment.liked ? 'active' : ''}" onclick="toggleLikeComment('${comment.id}')">
+                        👍 <span class="comment-likes">${comment.likes}</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// تنسيق وقت التعليق
+function formatCommentTime(date) {
+    const now = new Date();
+    const diff = now - date;
+    
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'الآن';
+    if (minutes < 60) return `منذ ${minutes} دقيقة`;
+    if (hours < 24) return `منذ ${hours} ساعة`;
+    if (days < 7) return `منذ ${days} يوم`;
+    
+    return date.toLocaleDateString('ar-SA');
+}
+
+// حذف تعليق
+function deleteComment(commentId) {
+    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا التعليق؟')) {
+        return;
+    }
+    
+    if (!currentQuestion || !allComments[currentQuestion]) {
+        return;
+    }
+    
+    allComments[currentQuestion] = allComments[currentQuestion].filter(c => c.id !== commentId);
+    localStorage.setItem('allComments', JSON.stringify(allComments));
+    
+    renderComments();
+}
+
+// تبديل الإعجاب بالتعليق
+function toggleLikeComment(commentId) {
+    if (!currentQuestion || !allComments[currentQuestion]) {
+        return;
+    }
+    
+    const comment = allComments[currentQuestion].find(c => c.id === commentId);
+    if (!comment) return;
+    
+    if (comment.liked) {
+        comment.likes = Math.max(0, comment.likes - 1);
+        comment.liked = false;
+    } else {
+        comment.likes += 1;
+        comment.liked = true;
+    }
+    
+    localStorage.setItem('allComments', JSON.stringify(allComments));
+    renderComments();
+}
+
+// تنظيف النص من الأحرف الخطرة
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// تحديث عداد الأحرف
+function updateCharCount() {
+    const commentInput = document.getElementById('commentInput');
+    const charCount = document.getElementById('charCount');
+    charCount.textContent = commentInput.value.length;
+}
+
+// تحديث عرض التعليقات عند فتح السؤال
+function updateCommentsDisplay() {
+    renderComments();
+}
+
+// إضافة Event Listeners للتعليقات
+document.addEventListener('DOMContentLoaded', () => {
+    const submitCommentBtn = document.getElementById('submitCommentBtn');
+    const commentInput = document.getElementById('commentInput');
+    
+    if (submitCommentBtn) {
+        submitCommentBtn.addEventListener('click', addNewComment);
+    }
+    
+    if (commentInput) {
+        commentInput.addEventListener('input', updateCharCount);
+        commentInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                addNewComment();
+            }
+        });
+    }
+});
+
+// تحديث showQuestionModal الأصلي لعرض التعليقات
+const originalShowQuestionModal = showQuestionModal;
+showQuestionModal = function(question) {
+    originalShowQuestionModal(question);
+    updateCommentsDisplay();
+};
