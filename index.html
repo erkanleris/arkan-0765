@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="أسئلة أركان - 5000 سؤال عميق وفلسفي لتوسيع آفاقك الفكرية">
     <meta name="keywords" content="أسئلة, فلسفة, تفكير, أركان">
     <title>أسئلة أركان - عالم التفكير العميق</title>
@@ -25,15 +25,18 @@
                 </div>
             </div>
             <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
+                    <button id="searchBtn" class="search-btn">🔍</button>
+                </div>
+                <button id="menuBtn" class="btn-menu">☰</button>
+            </div>
+            <div id="mobileMenu" class="mobile-menu" style="display: none;">
                 <button id="aboutBtn" class="btn-about">ℹ️ عن أركان</button>
                 <button id="categoriesBtn" class="btn-categories">🏷️ التصنيفات</button>
                 <button id="dailyBtn" class="btn-daily">📅 السؤال اليومي</button>
                 <button id="favoritesBtn" class="btn-favorites">❤️ المفضلة</button>
                 <button id="statsBtn" class="btn-stats">📊 الإحصائيات</button>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
-                    <button id="searchBtn" class="search-btn">🔍</button>
-                </div>
             </div>
         </div>
     </header>
