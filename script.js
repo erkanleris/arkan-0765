@@ -994,3 +994,108 @@ showQuestionModal = function(question) {
     originalShowQuestionModal(question);
     updateCommentsDisplay();
 };
+
+
+// ===== نظام عداد المستخدمين النشطين =====
+
+// متغيرات العداد
+let activeUsers = JSON.parse(localStorage.getItem('activeUsers')) || {};
+let currentSessionId = null;
+
+// إنشاء معرّف جلسة فريد
+function generateSessionId() {
+    return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+}
+
+// الحصول على معرّف الجلسة
+function getSessionId() {
+    if (!currentSessionId) {
+        currentSessionId = generateSessionId();
+    }
+    return currentSessionId;
+}
+
+// تحديث عداد المستخدمين النشطين
+function updateActiveUsersCount() {
+    const now = Date.now();
+    const sessionId = getSessionId();
+    const sessionTimeout = 5 * 60 * 1000; // 5 دقائق
+    
+    // إضافة الجلسة الحالية
+    activeUsers[sessionId] = now;
+    
+    // إزالة الجلسات المنتهية
+    Object.keys(activeUsers).forEach(id => {
+        if (now - activeUsers[id] > sessionTimeout) {
+            delete activeUsers[id];
+        }
+    });
+    
+    // حفظ في localStorage
+    localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+    
+    // حساب عدد المستخدمين النشطين (بين 1 و 729)
+    const activeCount = Object.keys(activeUsers).length;
+    const displayCount = Math.min(Math.max(activeCount, 1), 729);
+    
+    // تحديث العداد في الواجهة
+    updateCounterDisplay(displayCount);
+}
+
+// تحديث عرض العداد
+function updateCounterDisplay(count) {
+    const counterElement = document.getElementById('activeUsersCount');
+    if (counterElement) {
+        const oldCount = parseInt(counterElement.textContent);
+        counterElement.textContent = count;
+        
+        // إضافة تأثير الحركة عند التحديث
+        if (oldCount !== count) {
+            counterElement.classList.remove('updated');
+            // إعادة تشغيل الحركة
+            void counterElement.offsetWidth; // Force reflow
+            counterElement.classList.add('updated');
+        }
+    }
+}
+
+// تحديث العداد كل 3 ثوانٍ
+function startActiveUsersCounter() {
+    updateActiveUsersCount();
+    
+    // تحديث العداد بشكل دوري
+    setInterval(() => {
+        updateActiveUsersCount();
+    }, 3000);
+    
+    // تحديث العداد عند كل نشاط من المستخدم
+    document.addEventListener('click', updateActiveUsersCount);
+    document.addEventListener('keypress', updateActiveUsersCount);
+    document.addEventListener('scroll', updateActiveUsersCount);
+    
+    // تحديث العداد قبل إغلاق الصفحة
+    window.addEventListener('beforeunload', () => {
+        const sessionId = getSessionId();
+        delete activeUsers[sessionId];
+        localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+    });
+}
+
+// بدء العداد عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    startActiveUsersCounter();
+});
+
+// تنظيف الجلسات المنتهية كل 10 دقائق
+setInterval(() => {
+    const now = Date.now();
+    const sessionTimeout = 5 * 60 * 1000;
+    
+    Object.keys(activeUsers).forEach(id => {
+        if (now - activeUsers[id] > sessionTimeout) {
+            delete activeUsers[id];
+        }
+    });
+    
+    localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+}, 10 * 60 * 1000);
