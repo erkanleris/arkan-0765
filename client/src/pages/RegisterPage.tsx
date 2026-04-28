@@ -36,7 +36,10 @@ export default function RegisterPage() {
     );
 
     // إعادة التوجيه إلى الصفحة الرئيسية مباشرة
-    window.location.href = "/";
+    // إضافة تأخير صغير للتأكد من حفظ البيانات
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
