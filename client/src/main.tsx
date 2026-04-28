@@ -8,6 +8,16 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
+// التحقق من وجود مستخدم مسجل
+const checkUserRegistration = () => {
+  const user = localStorage.getItem("user");
+  if (!user && window.location.pathname !== "/register") {
+    window.location.href = "/register";
+  }
+};
+
+checkUserRegistration();
+
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

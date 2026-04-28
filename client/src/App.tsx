@@ -7,11 +7,13 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import QuestionsPage from "./pages/QuestionsPage";
 import ChatPage from "./pages/ChatPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
+      <Route path={"/register"} component={RegisterPage} />
       <Route path={"/"} component={Home} />
       <Route path={"/questions/:category"} component={QuestionsPage} />
       <Route path={"/chat"} component={ChatPage} />
