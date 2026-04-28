@@ -37,10 +37,12 @@ export default function RegisterPage() {
     );
 
     // إعادة التوجيه إلى الصفحة الرئيسية
-    // استخدام window.location.href بدلاً من navigate للتأكد من إعادة التحميل
+    navigate("/");
+    
+    // إعادة تحميل الصفحة بعد التنقل
     setTimeout(() => {
-      window.location.href = "/";
-    }, 300);
+      window.location.reload();
+    }, 100);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
