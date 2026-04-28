@@ -55,6 +55,14 @@ document.getElementById('loginForm')?.addEventListener('submit', (e) => {
         };
 
         saveData();
+        
+        // إخفاء شاشة التسجيل
+        const loginScreen = document.getElementById('loginScreen');
+        if (loginScreen) {
+            loginScreen.style.display = 'none';
+        }
+        
+        // إظهار رسالة الترحيب
         showWelcomeModal();
     } else {
         alert('يرجى ملء جميع الحقول');
@@ -76,6 +84,7 @@ function showWelcomeModal() {
     const modal = document.getElementById('welcomeModal');
     if (modal && appData.user) {
         document.getElementById('welcomeMessage').textContent = `مرحباً بك يا ${appData.user.name}! 👋`;
+        modal.style.display = 'flex';
         modal.classList.add('active');
     }
 }
