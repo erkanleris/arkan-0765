@@ -82,12 +82,31 @@ function showWelcomeModal() {
 
 // إغلاق رسالة الترحيب والذهاب للتطبيق
 document.getElementById('closeWelcomeBtn')?.addEventListener('click', () => {
-    document.getElementById('welcomeModal').classList.remove('active');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'flex';
+    // إغلاق رسالة الترحيب
+    const welcomeModal = document.getElementById('welcomeModal');
+    if (welcomeModal) {
+        welcomeModal.style.display = 'none';
+    }
+    
+    // إغلاق شاشة التسجيل
+    const loginScreen = document.getElementById('loginScreen');
+    if (loginScreen) {
+        loginScreen.style.display = 'none';
+    }
+    
+    // إظهار الموقع الأساسي
+    const mainApp = document.getElementById('mainApp');
+    if (mainApp) {
+        mainApp.style.display = 'flex';
+    }
+    
+    // تحديث البيانات
     updateProfile();
     updateActiveUsers();
     renderQuestions();
+    
+    // عرض قسم الأسئلة ببشكل افتراضي
+    showPage('questionsPage');
 });
 
 // تحديث الملف الشخصي
@@ -386,9 +405,26 @@ document.getElementById('questionSearch')?.addEventListener('input', (e) => {
 // إغلاق Modal بالنقر خارجه
 document.getElementById('welcomeModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'welcomeModal') {
-        document.getElementById('welcomeModal').classList.remove('active');
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) {
+            welcomeModal.style.display = 'none';
+        }
     }
 });
+
+// دالة لعرض الصفحات
+function showPage(pageId) {
+    // إخفاء جميع الصفحات
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+    
+    // عرض الصفحة المطلوبة
+    const page = document.getElementById(pageId);
+    if (page) {
+        page.classList.add('active');
+    }
+}
 
 // تحميل البيانات عند بدء التطبيق
 document.addEventListener('DOMContentLoaded', () => {
