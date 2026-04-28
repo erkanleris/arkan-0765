@@ -1,1101 +1,375 @@
-// البيانات
-const categories = {
-    personal: { name: 'أسئلة شخصية', icon: '👤', color: 'from-blue-600 to-blue-400' },
-    general: { name: 'أسئلة عامة', icon: '🌍', color: 'from-green-600 to-green-400' },
-    religious: { name: 'أسئلة دينية', icon: '🕌', color: 'from-yellow-600 to-yellow-400' },
-    cultural: { name: 'أسئلة ثقافية', icon: '📚', color: 'from-purple-600 to-purple-400' },
-    love: { name: 'أسئلة عن الحب', icon: '❤️', color: 'from-red-600 to-red-400' }
+// بيانات التطبيق
+let appData = {
+    user: null,
+    questions: [],
+    chatMessages: [],
+    quotes: [],
+    phrases: [],
+    activeUsers: 0
 };
 
-let currentCategory = null;
-let currentPage = 1;
-const itemsPerPage = 12;
-let filteredQuestions = [];
-let currentQuestion = '';
-let ratings = JSON.parse(localStorage.getItem('ratings')) || {};
-let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+// تحميل البيانات من localStorage
+function loadData() {
+    const savedUser = localStorage.getItem('arkanUser');
+    const savedChat = localStorage.getItem('arkanChat');
+    const savedQuotes = localStorage.getItem('arkanQuotes');
+    const savedPhrases = localStorage.getItem('arkanPhrases');
 
-// تهيئة الخلفية المتحركة
-function initCanvas() {
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const particles = [];
-    
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
-            this.radius = Math.random() * 2;
-            this.opacity = Math.random() * 0.5 + 0.1;
-        }
-        
-        update() {
-            this.x += this.vx;
-            this.y += this.vy;
-            
-            if (this.x < 0) this.x = canvas.width;
-            if (this.x > canvas.width) this.x = 0;
-            if (this.y < 0) this.y = canvas.height;
-            if (this.y > canvas.height) this.y = 0;
-        }
-        
-        draw() {
-            ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-    
-    // إنشاء جزيئات
-    for (let i = 0; i < 50; i++) {
-        particles.push(new Particle());
-    }
-    
-    function animate() {
-        ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // رسم تدرج
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, 'rgba(212, 175, 55, 0.05)');
-        gradient.addColorStop(0.5, 'rgba(106, 27, 154, 0.05)');
-        gradient.addColorStop(1, 'rgba(212, 175, 55, 0.05)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-    
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-}
+    if (savedUser) appData.user = JSON.parse(savedUser);
+    if (savedChat) appData.chatMessages = JSON.parse(savedChat);
+    if (savedQuotes) appData.quotes = JSON.parse(savedQuotes);
+    if (savedPhrases) appData.phrases = JSON.parse(savedPhrases);
 
-// تحميل الأسئلة
-function loadQuestions() {
-    if (typeof questionsData === 'undefined') {
-        console.error('بيانات الأسئلة غير محملة');
-        return;
-    }
-    
-    renderCategories();
-    renderStats();
-}
-
-// عرض الأقسام
-function renderCategories() {
-    const grid = document.getElementById('categoriesGrid');
-    grid.innerHTML = '';
-    
-    Object.entries(categories).forEach(([key, cat]) => {
-        const count = questionsData[key]?.length || 0;
-        const card = document.createElement('div');
-        card.className = 'category-card';
-        card.innerHTML = `
-            <div class="category-icon">${cat.icon}</div>
-            <div class="category-name">${cat.name}</div>
-            <div class="category-count">${count} سؤال</div>
-        `;
-        card.addEventListener('click', () => showCategory(key));
-        grid.appendChild(card);
-    });
-}
-
-// عرض الإحصائيات
-function renderStats() {
-    const grid = document.getElementById('statsGrid');
-    grid.innerHTML = '';
-    
-    const totalQuestions = Object.values(questionsData).reduce((sum, arr) => sum + arr.length, 0);
-    const totalCategories = Object.keys(questionsData).length;
-    
-    const stats = [
-        { number: totalQuestions, label: 'سؤال فريد' },
-        { number: totalCategories, label: 'قسم رئيسي' },
-        { number: '1000+', label: 'سؤال لكل قسم' },
-        { number: '100%', label: 'مجاني' }
-    ];
-    
-    stats.forEach(stat => {
-        const item = document.createElement('div');
-        item.className = 'stat-item';
-        item.innerHTML = `
-            <div class="stat-number">${stat.number}</div>
-            <div class="stat-label">${stat.label}</div>
-        `;
-        grid.appendChild(item);
-    });
-}
-
-// عرض قسم معين
-function showCategory(categoryKey) {
-    currentCategory = categoryKey;
-    currentPage = 1;
-    filteredQuestions = questionsData[categoryKey] || [];
-    
-    document.querySelector('.hero').style.display = 'none';
-    document.querySelector('.categories').style.display = 'none';
-    document.querySelector('.info-section').style.display = 'none';
-    document.getElementById('questionsSection').style.display = 'block';
-    
-    document.getElementById('categoryTitle').textContent = categories[categoryKey].name;
-    renderQuestions();
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// عرض الأسئلة
-function renderQuestions() {
-    const grid = document.getElementById('questionsGrid');
-    grid.innerHTML = '';
-    
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const paginatedQuestions = filteredQuestions.slice(start, end);
-    
-    if (paginatedQuestions.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">لا توجد أسئلة تطابق البحث</p>';
-        return;
-    }
-    
-    paginatedQuestions.forEach((question, index) => {
-        const card = document.createElement('div');
-        card.className = 'question-card';
-        card.innerHTML = `
-            <div>
-                <div class="question-number">#${start + index + 1}</div>
-                <div class="question-text">${question}</div>
-            </div>
-            <div class="question-hint">اضغط لقراءة السؤال كاملاً</div>
-        `;
-        card.addEventListener('click', () => showQuestionModal(question));
-        grid.appendChild(card);
-    });
-    
-    renderPagination();
-}
-
-// عرض التصفح
-function renderPagination() {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    
-    const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-    
-    if (totalPages <= 1) return;
-    
-    for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        btn.className = i === currentPage ? 'active' : '';
-        btn.addEventListener('click', () => {
-            currentPage = i;
-            renderQuestions();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        pagination.appendChild(btn);
+    // تحميل الأسئلة
+    if (typeof questionsData !== 'undefined' && questionsData.questions) {
+        appData.questions = questionsData.questions;
     }
 }
 
-// عرض السؤال في نافذة منفصلة
-function showQuestionModal(question) {
-    currentQuestion = question;
-    document.getElementById('modalQuestion').textContent = question;
-    document.getElementById('questionModal').style.display = 'flex';
-    updateRatingButtons();
+// حفظ البيانات في localStorage
+function saveData() {
+    localStorage.setItem('arkanUser', JSON.stringify(appData.user));
+    localStorage.setItem('arkanChat', JSON.stringify(appData.chatMessages));
+    localStorage.setItem('arkanQuotes', JSON.stringify(appData.quotes));
+    localStorage.setItem('arkanPhrases', JSON.stringify(appData.phrases));
 }
 
-// دوال التقييم والمفضلة
-function rateQuestion(rating) {
-    if (!currentQuestion) return;
-    ratings[currentQuestion] = rating;
-    localStorage.setItem('ratings', JSON.stringify(ratings));
-    updateRatingButtons();
-}
+// معالجة تسجيل الدخول
+document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('userName').value.trim();
+    const age = parseInt(document.getElementById('userAge').value);
 
-function toggleFavorite() {
-    if (!currentQuestion) return;
-    const index = favorites.indexOf(currentQuestion);
-    if (index > -1) {
-        favorites.splice(index, 1);
-    } else {
-        favorites.push(currentQuestion);
+    if (name && age > 0) {
+        appData.user = {
+            id: Date.now(),
+            name: name,
+            age: age,
+            joinDate: new Date().toISOString(),
+            comments: 0,
+            quotes: 0,
+            phrases: 0
+        };
+
+        saveData();
+        showApp();
     }
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    updateRatingButtons();
-}
+});
 
-function updateRatingButtons() {
-    const likeBtn = document.getElementById('likeBtn');
-    const dislikeBtn = document.getElementById('dislikeBtn');
-    const favoriteBtn = document.getElementById('favoriteBtn');
-    
-    likeBtn.classList.remove('active');
-    dislikeBtn.classList.remove('active');
-    favoriteBtn.classList.remove('active');
-    
-    if (ratings[currentQuestion] === 'like') {
-        likeBtn.classList.add('active');
-    } else if (ratings[currentQuestion] === 'dislike') {
-        dislikeBtn.classList.add('active');
-    }
-    
-    if (favorites.includes(currentQuestion)) {
-        favoriteBtn.classList.add('active');
-    }
-}
-
-// إغلاق النافذة
-function closeModal() {
-    document.getElementById('questionModal').style.display = 'none';
-}
-
-// العودة للرئيسية
-function goHome() {
-    currentCategory = null;
-    currentPage = 1;
-    filteredQuestions = [];
-    
-    document.querySelector('.hero').style.display = 'block';
-    document.querySelector('.categories').style.display = 'block';
-    document.querySelector('.info-section').style.display = 'block';
-    document.getElementById('questionsSection').style.display = 'none';
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// سؤال عشوائي
-function getRandomQuestion() {
-    let questions = [];
-    if (currentCategory) {
-        questions = questionsData[currentCategory] || [];
-    } else {
-        Object.values(questionsData).forEach(arr => questions.push(...arr));
-    }
-    
-    if (questions.length > 0) {
-        const randomIndex = Math.floor(Math.random() * questions.length);
-        showQuestionModal(questions[randomIndex]);
-    }
-}
-
-// البحث
-function performSearch(query) {
-    if (!currentCategory) return;
-    
-    if (query.trim() === '') {
-        filteredQuestions = questionsData[currentCategory] || [];
-    } else {
-        const allQuestions = questionsData[currentCategory] || [];
-        filteredQuestions = allQuestions.filter(q => 
-            q.toLowerCase().includes(query.toLowerCase())
-        );
-    }
-    
-    currentPage = 1;
+// إظهار التطبيق الرئيسي
+function showApp() {
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('mainApp').style.display = 'flex';
+    updateProfile();
+    updateActiveUsers();
     renderQuestions();
 }
 
-// فتح/إغلاق صفحة عن أركان
-function openAbout() {
-    document.getElementById('aboutModal').style.display = 'flex';
-}
-
-function closeAbout() {
-    document.getElementById('aboutModal').style.display = 'none';
-}
-
-// إغلاق رسالة الترحيب
-function closeWelcome() {
-    document.getElementById('welcomeModal').style.display = 'none';
-    localStorage.setItem('welcomeShown', 'true');
-}
-
-// عرض رسالة الترحيب
-function showWelcome() {
-    const welcomeShown = localStorage.getItem('welcomeShown');
-    if (!welcomeShown) {
-        document.getElementById('welcomeModal').style.display = 'flex';
+// تحديث الملف الشخصي
+function updateProfile() {
+    if (appData.user) {
+        document.getElementById('profileName').textContent = appData.user.name;
+        document.getElementById('profileAge').textContent = `${appData.user.age} سنة`;
+        document.getElementById('statComments').textContent = appData.user.comments;
+        document.getElementById('statQuotes').textContent = appData.user.quotes;
+        document.getElementById('statPhrases').textContent = appData.user.phrases;
     }
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initCanvas();
-    loadQuestions();
-    showWelcome();
-    
-    // أزرار البحث
-    document.getElementById('searchBtn').addEventListener('click', () => {
-        const query = document.getElementById('searchInput').value;
-        performSearch(query);
-    });
-    
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = document.getElementById('searchInput').value;
-            performSearch(query);
-        }
-    });
-    
-    // أزرار البحث في القسم
-    document.getElementById('categorySearchBtn').addEventListener('click', () => {
-        const query = document.getElementById('categorySearchInput').value;
-        performSearch(query);
-    });
-    
-    document.getElementById('categorySearchInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = document.getElementById('categorySearchInput').value;
-            performSearch(query);
-        }
-    });
-    
-    // أزرار الأسئلة العشوائية
-    document.getElementById('randomBtn').addEventListener('click', getRandomQuestion);
-    document.getElementById('randomCategoryBtn').addEventListener('click', getRandomQuestion);
-    
-    // أزرار النافذة
-    document.getElementById('closeBtn').addEventListener('click', closeModal);
-    document.getElementById('anotherBtn').addEventListener('click', () => {
-        getRandomQuestion();
-    });
-    document.querySelector('.modal-close').addEventListener('click', closeModal);
-    
-    // إغلاق النافذة عند النقر خارجها
-    document.getElementById('questionModal').addEventListener('click', (e) => {
-        if (e.target.id === 'questionModal') {
-            closeModal();
-        }
-    });
-    
-    // زر العودة
-    document.getElementById('backBtn').addEventListener('click', goHome);
-    
-    // زر About
-    document.getElementById('aboutBtn').addEventListener('click', openAbout);
-    
-    // إغلاق About عند النقر خارجها
-    document.getElementById('aboutModal').addEventListener('click', (e) => {
-        if (e.target.id === 'aboutModal') {
-            closeAbout();
-        }
-    });
-    
-    // أزرار التقييم
-    document.getElementById('likeBtn').addEventListener('click', () => rateQuestion('like'));
-    document.getElementById('dislikeBtn').addEventListener('click', () => rateQuestion('dislike'));
-    document.getElementById('favoriteBtn').addEventListener('click', toggleFavorite);
-    
-    // أزرار المفضلة والإحصائيات والمشاركة
-    document.getElementById('favoritesBtn').addEventListener('click', openFavorites);
-    document.getElementById('statsBtn').addEventListener('click', openStats);
-    
-    // إغلاق المفضلة والإحصائيات عند النقر خارجها
-    document.getElementById('favoritesModal').addEventListener('click', (e) => {
-        if (e.target.id === 'favoritesModal') {
-            closeFavorites();
-        }
-    });
-    
-    document.getElementById('statsModal').addEventListener('click', (e) => {
-        if (e.target.id === 'statsModal') {
-            closeStats();
-        }
-    });
-    
-    document.getElementById('shareModal').addEventListener('click', (e) => {
-        if (e.target.id === 'shareModal') {
-            closeShare();
-        }
-    });
-});
-
-// دوال المفضلة
-function openFavorites() {
-    const favoritesModal = document.getElementById('favoritesModal');
-    const favoritesList = document.getElementById('favoritesList');
-    
-    if (favorites.length === 0) {
-        favoritesList.innerHTML = '<p class="empty-message">لم تقم بحفظ أي أسئلة بعد</p>';
-    } else {
-        favoritesList.innerHTML = favorites.map((fav, index) => `
-            <div class="favorite-item">
-                <div class="favorite-item-text">${fav}</div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button class="favorite-item-btn" onclick="shareQuestion('${fav.replace(/'/g, "\\'")}')">📤 مشاركة</button>
-                    <button class="favorite-item-btn" onclick="removeFavorite(${index})">🗑️ حذف</button>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    favoritesModal.style.display = 'flex';
-}
-
-function closeFavorites() {
-    document.getElementById('favoritesModal').style.display = 'none';
-}
-
-function removeFavorite(index) {
-    favorites.splice(index, 1);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    openFavorites();
-}
-
-// دوال الإحصائيات
-function openStats() {
-    updateStatsDisplay();
-    document.getElementById('statsModal').style.display = 'flex';
-}
-
-function closeStats() {
-    document.getElementById('statsModal').style.display = 'none';
-}
-
-function updateStatsDisplay() {
-    const likeCount = Object.values(ratings).filter(r => r === 'like').length;
-    const dislikeCount = Object.values(ratings).filter(r => r === 'dislike').length;
-    const totalRatings = likeCount + dislikeCount;
-    const satisfactionRate = totalRatings > 0 ? Math.round((likeCount / totalRatings) * 100) : 0;
-    
-    document.getElementById('viewedCount').textContent = Object.keys(ratings).length;
-    document.getElementById('favoriteCount').textContent = favorites.length;
-    document.getElementById('likeCount').textContent = likeCount;
-    document.getElementById('dislikeCount').textContent = dislikeCount;
-    document.getElementById('satisfactionRate').textContent = satisfactionRate + '%';
-}
-
-function clearStats() {
-    if (confirm('هل أنت متأكد من رغبتك في مسح جميع الإحصائيات؟')) {
-        ratings = {};
-        favorites = [];
-        localStorage.setItem('ratings', JSON.stringify(ratings));
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        updateStatsDisplay();
-        alert('تم مسح جميع الإحصائيات بنجاح');
-    }
-}
-
-// دوال المشاركة
-function shareQuestion(question) {
-    currentQuestion = question;
-    document.getElementById('shareModal').style.display = 'flex';
-}
-
-function closeShare() {
-    document.getElementById('shareModal').style.display = 'none';
-}
-
-function shareOnTwitter() {
-    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان`);
-    const url = `https://twitter.com/intent/tweet?text=${text}&url=https://askarkan-cqgnrdmh.manus.space`;
-    window.open(url, '_blank');
-}
-
-function shareOnFacebook() {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=https://askarkan-cqgnrdmh.manus.space&quote=${encodeURIComponent(`أسئلة أركان: "${currentQuestion}"`)}`;
-    window.open(url, '_blank');
-}
-
-function shareOnWhatsApp() {
-    const text = encodeURIComponent(`أسئلة أركان: "${currentQuestion}" 🤔\n\nاستكشف آلاف الأسئلة العميقة على موقع أسئلة أركان\nhttps://askarkan-cqgnrdmh.manus.space`);
-    const url = `https://wa.me/?text=${text}`;
-    window.open(url, '_blank');
-}
-
-function copyToClipboard() {
-    const text = `أسئلة أركان: "${currentQuestion}"\n\nhttps://askarkan-cqgnrdmh.manus.space`;
-    navigator.clipboard.writeText(text).then(() => {
-        alert('تم نسخ السؤال بنجاح!');
-    });
-}
-
-
-// متغيرات للتصنيفات والسؤال اليومي والتعليقات
-const subcategories = {
-    personal: ['فلسفية', 'نفسية', 'اجتماعية', 'روحية'],
-    general: ['فلسفية', 'علمية', 'اجتماعية', 'أخلاقية'],
-    religious: ['عقائدية', 'أخلاقية', 'روحية', 'فقهية'],
-    cultural: ['فنية', 'أدبية', 'تاريخية', 'حضارية'],
-    love: ['عاطفية', 'نفسية', 'اجتماعية', 'فلسفية']
-};
-
-let comments = JSON.parse(localStorage.getItem('comments')) || {};
-let dailyQuestion = null;
-
-// دوال التصنيفات
-function openCategories() {
-    const categoriesModal = document.getElementById('categoriesModal');
-    const categoriesList = document.getElementById('categoriesList');
-    
-    categoriesList.innerHTML = Object.entries(questionsData).map(([category, questions]) => `
-        <div class="category-item" onclick="showCategorySubcategories('${category}')">
-            <div class="category-item-icon">${getCategoryIcon(category)}</div>
-            <div class="category-item-name">${getCategoryName(category)}</div>
-            <div class="category-item-count">${questions.length} سؤال</div>
-        </div>
-    `).join('');
-    
-    categoriesModal.style.display = 'flex';
-}
-
-function closeCategories() {
-    document.getElementById('categoriesModal').style.display = 'none';
-}
-
-function getCategoryIcon(category) {
-    const icons = {
-        personal: '🧠',
-        general: '🌍',
-        religious: '🕌',
-        cultural: '🎭',
-        love: '💕'
-    };
-    return icons[category] || '❓';
-}
-
-function getCategoryName(category) {
-    const names = {
-        personal: 'أسئلة شخصية',
-        general: 'أسئلة عامة',
-        religious: 'أسئلة دينية',
-        cultural: 'أسئلة ثقافية',
-        love: 'أسئلة عن الحب'
-    };
-    return names[category] || category;
-}
-
-function showCategorySubcategories(category) {
-    // يمكن إضافة عرض التصنيفات الفرعية هنا
-    alert(`تم اختيار: ${getCategoryName(category)}`);
-}
-
-// دوال السؤال اليومي
-function openDaily() {
-    const today = new Date().toDateString();
-    const storedDaily = JSON.parse(localStorage.getItem('dailyQuestion')) || {};
-    
-    if (storedDaily.date !== today) {
-        // اختيار سؤال عشوائي جديد
-        const allQuestions = Object.values(questionsData).flat();
-        dailyQuestion = allQuestions[Math.floor(Math.random() * allQuestions.length)];
-        localStorage.setItem('dailyQuestion', JSON.stringify({
-            question: dailyQuestion,
-            date: today
-        }));
-    } else {
-        dailyQuestion = storedDaily.question;
-    }
-    
-    document.getElementById('dailyQuestion').textContent = dailyQuestion;
-    document.getElementById('dailyDate').textContent = `اليوم: ${today}`;
-    document.getElementById('dailyModal').style.display = 'flex';
-}
-
-function closeDaily() {
-    document.getElementById('dailyModal').style.display = 'none';
-}
-
-function toggleDailyFavorite() {
-    if (dailyQuestion && !favorites.includes(dailyQuestion)) {
-        favorites.push(dailyQuestion);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        alert('تم حفظ السؤال في المفضلة!');
-    } else {
-        alert('السؤال محفوظ بالفعل في المفضلة');
-    }
-}
-
-function shareDailyQuestion() {
-    if (dailyQuestion) {
-        shareQuestion(dailyQuestion);
-    }
-}
-
-// دوال التعليقات
-function openComments() {
-    const commentsModal = document.getElementById('commentsModal');
-    const commentsList = document.getElementById('commentsList');
-    
-    if (!currentQuestion) {
-        alert('يرجى اختيار سؤال أولاً');
-        return;
-    }
-    
-    if (!comments[currentQuestion]) {
-        comments[currentQuestion] = [];
-    }
-    
-    if (comments[currentQuestion].length === 0) {
-        commentsList.innerHTML = '<p class="empty-message">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
-    } else {
-        commentsList.innerHTML = comments[currentQuestion].map((comment, index) => `
-            <div class="comment-item">
-                <div class="comment-author">${comment.author}</div>
-                <div class="comment-text">${comment.text}</div>
-                <div class="comment-time">${comment.time}</div>
-                <button onclick="deleteComment('${currentQuestion}', ${index})" style="margin-top: 0.5rem; padding: 0.3rem 0.8rem; background: #d32f2f; color: white; border: none; border-radius: 4px; cursor: pointer;">حذف</button>
-            </div>
-        `).join('');
-    }
-    
-    commentsModal.style.display = 'flex';
-}
-
-function closeComments() {
-    document.getElementById('commentsModal').style.display = 'none';
-}
-
-function addComment() {
-    const commentInput = document.getElementById('commentInput');
-    const text = commentInput.value.trim();
-    
-    if (!text) {
-        alert('يرجى كتابة تعليق');
-        return;
-    }
-    
-    if (!comments[currentQuestion]) {
-        comments[currentQuestion] = [];
-    }
-    
-    const comment = {
-        author: 'زائر',
-        text: text,
-        time: new Date().toLocaleString('ar-SA')
-    };
-    
-    comments[currentQuestion].push(comment);
-    localStorage.setItem('comments', JSON.stringify(comments));
-    commentInput.value = '';
-    
-    openComments();
-}
-
-function deleteComment(question, index) {
-    if (confirm('هل تريد حذف هذا التعليق؟')) {
-        comments[question].splice(index, 1);
-        localStorage.setItem('comments', JSON.stringify(comments));
-        openComments();
-    }
-}
-
-// إضافة event listeners للأزرار الجديدة
-document.addEventListener('DOMContentLoaded', () => {
-    const categoriesBtn = document.getElementById('categoriesBtn');
-    const dailyBtn = document.getElementById('dailyBtn');
-    
-    if (categoriesBtn) {
-        categoriesBtn.addEventListener('click', openCategories);
-    }
-    
-    if (dailyBtn) {
-        dailyBtn.addEventListener('click', openDaily);
-    }
-    
-    // إغلاق الـ modals عند النقر خارجها
-    document.getElementById('categoriesModal').addEventListener('click', (e) => {
-        if (e.target.id === 'categoriesModal') closeCategories();
-    });
-    
-    document.getElementById('dailyModal').addEventListener('click', (e) => {
-        if (e.target.id === 'dailyModal') closeDaily();
-    });
-    
-    document.getElementById('commentsModal').addEventListener('click', (e) => {
-        if (e.target.id === 'commentsModal') closeComments();
-    });
-});
-
-// إضافة زر التعليقات في modal الأسئلة
-function addCommentsButtonToQuestion() {
-    const questionModal = document.getElementById('questionModal');
-    if (questionModal && !document.getElementById('commentsBtn')) {
-        const actionsDiv = questionModal.querySelector('.question-actions');
-        if (actionsDiv) {
-            const commentsBtn = document.createElement('button');
-            commentsBtn.id = 'commentsBtn';
-            commentsBtn.className = 'question-action-btn';
-            commentsBtn.textContent = '💬 التعليقات';
-            commentsBtn.onclick = openComments;
-            actionsDiv.appendChild(commentsBtn);
-        }
-    }
-}
-
-
-// Mobile Menu Toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    if (menuBtn) {
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-            mobileMenu.style.display = mobileMenu.classList.contains('active') ? 'flex' : 'none';
-        });
-    }
-
-    // Close menu when clicking a button
-    const mobileMenuButtons = mobileMenu.querySelectorAll('button');
-    mobileMenuButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            mobileMenu.style.display = 'none';
-        });
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.header-right') && !e.target.closest('.mobile-menu')) {
-            mobileMenu.classList.remove('active');
-            mobileMenu.style.display = 'none';
-        }
-    });
-});
-
-
-// ===== نظام التعليقات المجتمعي المتقدم =====
-
-// متغيرات التعليقات
-let allComments = JSON.parse(localStorage.getItem('allComments')) || {};
-let userIds = JSON.parse(localStorage.getItem('userIds')) || {};
-
-// إنشاء معرّف فريد للمستخدم
-function getUserId() {
-    let userId = localStorage.getItem('userId');
-    if (!userId) {
-        userId = 'user_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('userId', userId);
-    }
-    return userId;
-}
-
-// إنشاء اسم مستخدم مجهول
-function generateAnonymousName() {
-    const adjectives = ['ذكي', 'حكيم', 'متأمل', 'فضولي', 'عميق', 'مبدع', 'متفتح', 'هادئ', 'نشيط', 'ودود'];
-    const nouns = ['المفكر', 'الفيلسوف', 'الحالم', 'الباحث', 'الراوي', 'الناقد', 'الشاعر', 'الحكيم', 'المستكشف', 'الصديق'];
-    const number = Math.floor(Math.random() * 1000) + 1;
-    
-    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const noun = nouns[Math.floor(Math.random() * nouns.length)];
-    
-    return `${adj} ${noun} #${number}`;
-}
-
-// الحصول على اسم المستخدم أو إنشاء واحد جديد
-function getUserName() {
-    const userId = getUserId();
-    if (!userIds[userId]) {
-        userIds[userId] = generateAnonymousName();
-        localStorage.setItem('userIds', JSON.stringify(userIds));
-    }
-    return userIds[userId];
-}
-
-// إضافة تعليق جديد
-function addNewComment() {
-    const commentInput = document.getElementById('commentInput');
-    const text = commentInput.value.trim();
-    
-    if (!text) {
-        alert('يرجى كتابة تعليق');
-        return;
-    }
-    
-    if (!currentQuestion) {
-        alert('يرجى اختيار سؤال أولاً');
-        return;
-    }
-    
-    if (!allComments[currentQuestion]) {
-        allComments[currentQuestion] = [];
-    }
-    
-    const comment = {
-        id: 'comment_' + Math.random().toString(36).substr(2, 9),
-        userId: getUserId(),
-        userName: getUserName(),
-        text: text,
-        timestamp: new Date().getTime(),
-        likes: 0,
-        liked: false,
-        replies: []
-    };
-    
-    allComments[currentQuestion].unshift(comment); // إضافة في البداية
-    localStorage.setItem('allComments', JSON.stringify(allComments));
-    
-    commentInput.value = '';
-    document.getElementById('charCount').textContent = '0';
-    
-    renderComments();
-}
-
-// عرض التعليقات
-function renderComments() {
-    const commentsList = document.getElementById('commentsList');
-    const commentsCount = document.getElementById('commentsCount');
-    
-    if (!currentQuestion || !allComments[currentQuestion] || allComments[currentQuestion].length === 0) {
-        commentsList.innerHTML = '<p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق!</p>';
-        commentsCount.textContent = '0';
-        return;
-    }
-    
-    const questionComments = allComments[currentQuestion];
-    commentsCount.textContent = questionComments.length;
-    
-    commentsList.innerHTML = questionComments.map(comment => {
-        const date = new Date(comment.timestamp);
-        const timeStr = formatCommentTime(date);
-        const userInitial = comment.userName.charAt(0);
-        const isUserComment = comment.userId === getUserId();
-        
-        return `
-            <div class="comment-item" data-comment-id="${comment.id}">
-                <div class="comment-header">
-                    <div class="comment-user">
-                        <div class="comment-avatar">${userInitial}</div>
-                        <div>
-                            <div class="comment-username">${comment.userName}</div>
-                            <div class="comment-time">${timeStr}</div>
-                        </div>
-                    </div>
-                    ${isUserComment ? `<button class="comment-action-btn delete-btn" onclick="deleteComment('${comment.id}')">🗑️</button>` : ''}
-                </div>
-                <div class="comment-text">${escapeHtml(comment.text)}</div>
-                <div class="comment-actions">
-                    <button class="comment-action-btn like-btn ${comment.liked ? 'active' : ''}" onclick="toggleLikeComment('${comment.id}')">
-                        👍 <span class="comment-likes">${comment.likes}</span>
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// تنسيق وقت التعليق
-function formatCommentTime(date) {
-    const now = new Date();
-    const diff = now - date;
-    
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-    
-    if (minutes < 1) return 'الآن';
-    if (minutes < 60) return `منذ ${minutes} دقيقة`;
-    if (hours < 24) return `منذ ${hours} ساعة`;
-    if (days < 7) return `منذ ${days} يوم`;
-    
-    return date.toLocaleDateString('ar-SA');
-}
-
-// حذف تعليق
-function deleteComment(commentId) {
-    if (!confirm('هل أنت متأكد من رغبتك في حذف هذا التعليق؟')) {
-        return;
-    }
-    
-    if (!currentQuestion || !allComments[currentQuestion]) {
-        return;
-    }
-    
-    allComments[currentQuestion] = allComments[currentQuestion].filter(c => c.id !== commentId);
-    localStorage.setItem('allComments', JSON.stringify(allComments));
-    
-    renderComments();
-}
-
-// تبديل الإعجاب بالتعليق
-function toggleLikeComment(commentId) {
-    if (!currentQuestion || !allComments[currentQuestion]) {
-        return;
-    }
-    
-    const comment = allComments[currentQuestion].find(c => c.id === commentId);
-    if (!comment) return;
-    
-    if (comment.liked) {
-        comment.likes = Math.max(0, comment.likes - 1);
-        comment.liked = false;
-    } else {
-        comment.likes += 1;
-        comment.liked = true;
-    }
-    
-    localStorage.setItem('allComments', JSON.stringify(allComments));
-    renderComments();
-}
-
-// تنظيف النص من الأحرف الخطرة
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-// تحديث عداد الأحرف
-function updateCharCount() {
-    const commentInput = document.getElementById('commentInput');
-    const charCount = document.getElementById('charCount');
-    charCount.textContent = commentInput.value.length;
-}
-
-// تحديث عرض التعليقات عند فتح السؤال
-function updateCommentsDisplay() {
-    renderComments();
-}
-
-// إضافة Event Listeners للتعليقات
-document.addEventListener('DOMContentLoaded', () => {
-    const submitCommentBtn = document.getElementById('submitCommentBtn');
-    const commentInput = document.getElementById('commentInput');
-    
-    if (submitCommentBtn) {
-        submitCommentBtn.addEventListener('click', addNewComment);
-    }
-    
-    if (commentInput) {
-        commentInput.addEventListener('input', updateCharCount);
-        commentInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                addNewComment();
-            }
-        });
-    }
-});
-
-// تحديث showQuestionModal الأصلي لعرض التعليقات
-const originalShowQuestionModal = showQuestionModal;
-showQuestionModal = function(question) {
-    originalShowQuestionModal(question);
-    updateCommentsDisplay();
-};
-
-
-// ===== نظام عداد المستخدمين النشطين =====
-
-// متغيرات العداد
-let activeUsers = JSON.parse(localStorage.getItem('activeUsers')) || {};
-let currentSessionId = null;
-
-// إنشاء معرّف جلسة فريد
-function generateSessionId() {
-    return 'session_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-}
-
-// الحصول على معرّف الجلسة
-function getSessionId() {
-    if (!currentSessionId) {
-        currentSessionId = generateSessionId();
-    }
-    return currentSessionId;
 }
 
 // تحديث عداد المستخدمين النشطين
-function updateActiveUsersCount() {
-    const now = Date.now();
-    const sessionId = getSessionId();
-    const sessionTimeout = 5 * 60 * 1000; // 5 دقائق
-    
-    // إضافة الجلسة الحالية
-    activeUsers[sessionId] = now;
-    
-    // إزالة الجلسات المنتهية
-    Object.keys(activeUsers).forEach(id => {
-        if (now - activeUsers[id] > sessionTimeout) {
-            delete activeUsers[id];
-        }
-    });
-    
-    // حفظ في localStorage
-    localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
-    
-    // حساب عدد المستخدمين النشطين (بين 284 و 828)
-    // عدد عشوائي يتغير كل 3 ثوانٍ
-    const randomCount = Math.floor(Math.random() * (828 - 284 + 1)) + 284;
-    
-    // تحديث العداد في الواجهة
-    updateCounterDisplay(randomCount);
-}
-
-// تحديث عرض العداد
-function updateCounterDisplay(count) {
-    const counterElement = document.getElementById('activeUsersCount');
-    if (counterElement) {
-        const oldCount = parseInt(counterElement.textContent);
-        counterElement.textContent = count;
-        
-        // إضافة تأثير الحركة عند التحديث
-        if (oldCount !== count) {
-            counterElement.classList.remove('updated');
-            // إعادة تشغيل الحركة
-            void counterElement.offsetWidth; // Force reflow
-            counterElement.classList.add('updated');
-        }
-    }
+function updateActiveUsers() {
+    const min = 284;
+    const max = 828;
+    appData.activeUsers = Math.floor(Math.random() * (max - min + 1)) + min;
+    document.getElementById('activeUsersCount').textContent = appData.activeUsers;
+    document.getElementById('onlineCount').textContent = `${appData.activeUsers} نشيط`;
 }
 
 // تحديث العداد كل 3 ثوانٍ
-function startActiveUsersCounter() {
-    updateActiveUsersCount();
+setInterval(updateActiveUsers, 3000);
+
+// عرض الأسئلة
+function renderQuestions() {
+    const container = document.getElementById('questionsList');
+    if (!container) return;
     
-    // تحديث العداد بشكل دوري
-    setInterval(() => {
-        updateActiveUsersCount();
-    }, 3000);
-    
-    // تحديث العداد عند كل نشاط من المستخدم
-    document.addEventListener('click', updateActiveUsersCount);
-    document.addEventListener('keypress', updateActiveUsersCount);
-    document.addEventListener('scroll', updateActiveUsersCount);
-    
-    // تحديث العداد قبل إغلاق الصفحة
-    window.addEventListener('beforeunload', () => {
-        const sessionId = getSessionId();
-        delete activeUsers[sessionId];
-        localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+    container.innerHTML = '';
+
+    appData.questions.slice(0, 20).forEach((question, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = `<p>${question}</p>`;
+        card.addEventListener('click', () => showQuestionModal(question, index));
+        container.appendChild(card);
     });
 }
 
-// بدء العداد عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-    startActiveUsersCounter();
+// عرض السؤال في Modal
+function showQuestionModal(question, index) {
+    const modal = document.getElementById('questionModal');
+    if (!modal) return;
+    
+    document.getElementById('questionTitle').textContent = question;
+    
+    // عرض التعليقات
+    const commentsContainer = document.getElementById('questionComments');
+    commentsContainer.innerHTML = '';
+    
+    const comments = appData.chatMessages.filter(msg => msg.questionId === index);
+    comments.forEach(comment => {
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        div.innerHTML = `
+            <div class="comment-author">${comment.author}</div>
+            <div class="comment-text">${comment.text}</div>
+        `;
+        commentsContainer.appendChild(div);
+    });
+
+    modal.classList.add('active');
+
+    // معالج إضافة تعليق
+    const addBtn = document.getElementById('addCommentBtn');
+    if (addBtn) {
+        addBtn.onclick = () => {
+            const text = document.getElementById('commentInput').value.trim();
+            if (text && appData.user) {
+                const comment = {
+                    author: appData.user.name,
+                    text: text,
+                    questionId: index,
+                    timestamp: new Date().toISOString()
+                };
+                appData.chatMessages.push(comment);
+                appData.user.comments++;
+                saveData();
+                updateProfile();
+                document.getElementById('commentInput').value = '';
+                renderQuestions();
+                showQuestionModal(question, index);
+            }
+        };
+    }
+
+    // إغلاق Modal
+    const closeBtn = document.querySelector('.modal-close');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('active');
+        };
+    }
+}
+
+// معالجة الدردشة الجماعية
+document.getElementById('sendChatBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+
+    if (text && appData.user) {
+        const message = {
+            author: appData.user.name,
+            text: text,
+            timestamp: new Date().toISOString(),
+            own: true
+        };
+
+        appData.chatMessages.push(message);
+        saveData();
+        input.value = '';
+        renderChatMessages();
+    }
 });
 
-// تنظيف الجلسات المنتهية كل 10 دقائق
-setInterval(() => {
-    const now = Date.now();
-    const sessionTimeout = 5 * 60 * 1000;
+// عرض رسائل الدردشة
+function renderChatMessages() {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
     
-    Object.keys(activeUsers).forEach(id => {
-        if (now - activeUsers[id] > sessionTimeout) {
-            delete activeUsers[id];
+    container.innerHTML = '';
+
+    appData.chatMessages.slice(-20).forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `chat-message ${msg.own ? 'own' : ''}`;
+        div.innerHTML = `
+            <div class="message-author">${msg.author}</div>
+            <div class="message-text">${msg.text}</div>
+            <div class="message-time">${new Date(msg.timestamp).toLocaleTimeString('ar-SA')}</div>
+        `;
+        container.appendChild(div);
+    });
+
+    container.scrollTop = container.scrollHeight;
+}
+
+// إضافة اقتباس
+document.getElementById('addQuoteBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('quoteInput');
+    const text = input.value.trim();
+
+    if (text && appData.user) {
+        const quote = {
+            text: text,
+            author: appData.user.name,
+            timestamp: new Date().toISOString()
+        };
+
+        appData.quotes.push(quote);
+        appData.user.quotes++;
+        saveData();
+        updateProfile();
+        input.value = '';
+        renderQuotes();
+    }
+});
+
+// عرض الاقتباسات
+function renderQuotes() {
+    const container = document.getElementById('quotesList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+
+    appData.quotes.forEach(quote => {
+        const div = document.createElement('div');
+        div.className = 'quote-card';
+        div.innerHTML = `
+            <div class="quote-text">"${quote.text}"</div>
+            <div class="quote-author">— ${quote.author}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// إضافة عبارة
+document.getElementById('addPhraseBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('phraseInput');
+    const text = input.value.trim();
+
+    if (text && appData.user) {
+        const phrase = {
+            text: text,
+            author: appData.user.name,
+            timestamp: new Date().toISOString()
+        };
+
+        appData.phrases.push(phrase);
+        appData.user.phrases++;
+        saveData();
+        updateProfile();
+        input.value = '';
+        renderPhrases();
+    }
+});
+
+// عرض العبارات
+function renderPhrases() {
+    const container = document.getElementById('phrasesList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+
+    appData.phrases.forEach(phrase => {
+        const div = document.createElement('div');
+        div.className = 'phrase-card';
+        div.innerHTML = `
+            <div class="phrase-text">${phrase.text}</div>
+            <div class="phrase-author">— ${phrase.author}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// قائمة التنقل السفلية
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const pageId = item.dataset.page;
+        
+        // إزالة الفئة النشطة من جميع العناصر
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        
+        // إضافة الفئة النشطة للعنصر المختار
+        item.classList.add('active');
+        const page = document.getElementById(pageId);
+        if (page) {
+            page.classList.add('active');
+        }
+
+        // تحديث المحتوى
+        if (pageId === 'questionsPage') {
+            renderQuestions();
+        } else if (pageId === 'chatPage') {
+            renderChatMessages();
+        } else if (pageId === 'quotesPage') {
+            renderQuotes();
+        } else if (pageId === 'phrasesPage') {
+            renderPhrases();
         }
     });
+});
+
+// تسجيل الخروج
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    localStorage.removeItem('arkanUser');
+    appData.user = null;
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('loginScreen').classList.add('active');
+    const form = document.getElementById('loginForm');
+    if (form) form.reset();
+});
+
+// أزرار عشوائية
+document.getElementById('randomQuestionBtn')?.addEventListener('click', () => {
+    if (appData.questions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * appData.questions.length);
+        showQuestionModal(appData.questions[randomIndex], randomIndex);
+    }
+});
+
+document.getElementById('randomQuoteBtn')?.addEventListener('click', () => {
+    if (appData.quotes.length > 0) {
+        const randomQuote = appData.quotes[Math.floor(Math.random() * appData.quotes.length)];
+        alert(`"${randomQuote.text}"\n— ${randomQuote.author}`);
+    }
+});
+
+document.getElementById('randomPhraseBtn')?.addEventListener('click', () => {
+    if (appData.phrases.length > 0) {
+        const randomPhrase = appData.phrases[Math.floor(Math.random() * appData.phrases.length)];
+        alert(`${randomPhrase.text}\n— ${randomPhrase.author}`);
+    }
+});
+
+// البحث عن الأسئلة
+document.getElementById('questionSearch')?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const container = document.getElementById('questionsList');
+    if (!container) return;
     
-    localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
-}, 10 * 60 * 1000);
+    container.innerHTML = '';
+
+    const filtered = appData.questions.filter(q => q.toLowerCase().includes(query));
+    filtered.slice(0, 20).forEach((question, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = `<p>${question}</p>`;
+        card.addEventListener('click', () => showQuestionModal(question, index));
+        container.appendChild(card);
+    });
+});
+
+// تحميل البيانات عند بدء التطبيق
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+
+    // التحقق من وجود مستخدم مسجل دخول
+    if (appData.user) {
+        showApp();
+    } else {
+        const loginScreen = document.getElementById('loginScreen');
+        if (loginScreen) {
+            loginScreen.classList.add('active');
+        }
+    }
+});

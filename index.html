@@ -3,348 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="أسئلة أركان - 5000 سؤال عميق وفلسفي لتوسيع آفاقك الفكرية">
-    <meta name="keywords" content="أسئلة, فلسفة, تفكير, أركان">
-    <title>أسئلة أركان - عالم التفكير العميق</title>
+    <meta name="description" content="أسئلة أركان - تطبيق موبايل متكامل للأسئلة والدردشة والاقتباسات">
+    <meta name="keywords" content="أسئلة, دردشة, اقتباسات, عبارات, مجتمع">
+    <title>أسئلة أركان - تطبيق مجتمعي</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app"></div>
-
-    <!-- Canvas للخلفية المتحركة -->
-    <canvas id="bgCanvas"></canvas>
-
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-left">
-                <div class="logo">
-                    <span class="sparkles">✨</span>
+    <div id="app">
+        <!-- شاشة الدخول -->
+        <div id="loginScreen" class="login-screen active">
+            <div class="login-container">
+                <div class="logo-section">
+                    <span class="logo-emoji">✨</span>
                     <h1>أسئلة أركان</h1>
+                    <p>منصة مجتمعية للأسئلة والحوار</p>
                 </div>
-                <!-- عداد المستخدمين النشطين -->
-                <div class="active-users-counter">
-                    <span class="counter-icon">👥</span>
-                    <span class="counter-text">نشطين الآن:</span>
-                    <span class="counter-number" id="activeUsersCount">1</span>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="ابحث عن سؤال..." class="search-input">
-                    <button id="searchBtn" class="search-btn">🔍</button>
-                </div>
-                <button id="menuBtn" class="btn-menu">☰</button>
-            </div>
-            <div id="mobileMenu" class="mobile-menu" style="display: none;">
-                <button id="aboutBtn" class="btn-about">ℹ️ عن أركان</button>
-                <button id="categoriesBtn" class="btn-categories">🏷️ التصنيفات</button>
-                <button id="dailyBtn" class="btn-daily">📅 السؤال اليومي</button>
-                <button id="favoritesBtn" class="btn-favorites">❤️ المفضلة</button>
-                <button id="statsBtn" class="btn-stats">📊 الإحصائيات</button>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="userName">اسمك</label>
+                        <input type="text" id="userName" placeholder="أدخل اسمك" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userAge">عمرك</label>
+                        <input type="number" id="userAge" placeholder="أدخل عمرك" min="1" max="120" required>
+                    </div>
+                    <button type="submit" class="btn-login">دخول</button>
+                </form>
             </div>
         </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h2>أهلاً بك في عالم التفكير العميق</h2>
-            <p>استكشف آلاف الأسئلة التي ستغير نظرتك للأشياء وتوسع آفاقك الفكرية والفلسفية</p>
-            <button id="randomBtn" class="btn-primary">
-                <span>✨</span> سؤال عشوائي من كل الأقسام
-            </button>
-        </section>
-
-        <!-- Categories Section -->
-        <section class="categories">
-            <h3>استكشف الأقسام الخمسة</h3>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- يتم ملؤها بـ JavaScript -->
-            </div>
-        </section>
-
-        <!-- Info Section -->
-        <section class="info-section">
-            <h3>5000 سؤال عميق ومميز</h3>
-            <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، كل سؤال مصاغ بعناية ليكون عميقاً وفلسفياً ويدفعك للتفكير الحقيقي.</p>
-            <div class="stats-grid" id="statsGrid">
-                <!-- يتم ملؤها بـ JavaScript -->
-            </div>
-        </section>
-
-        <!-- Questions Section -->
-        <section id="questionsSection" class="questions-section" style="display: none;">
-            <div class="questions-header">
-                <button id="backBtn" class="btn-back">← العودة للرئيسية</button>
-                <h2 id="categoryTitle"></h2>
-                <button id="randomCategoryBtn" class="btn-primary">سؤال عشوائي</button>
-            </div>
-            <div class="search-bar-category">
-                <input type="text" id="categorySearchInput" placeholder="ابحث في هذا القسم..." class="search-input">
-                <button id="categorySearchBtn" class="search-btn">🔍</button>
-            </div>
-            <div class="questions-grid" id="questionsGrid">
-                <!-- يتم ملؤها بـ JavaScript -->
-            </div>
-            <div class="pagination" id="pagination">
-                <!-- يتم ملؤها بـ JavaScript -->
-            </div>
-        </section>
-    </main>
-
-    <!-- Modal رسالة الترحيب -->
-    <div id="welcomeModal" class="modal" style="display: none;">
-        <div class="modal-content welcome-modal">
-            <button class="modal-close" onclick="closeWelcome()">&times;</button>
-            <div class="welcome-header">
-                <div class="welcome-icon">✨</div>
-                <h2>أهلاً وسهلاً بك في أسئلة أركان</h2>
-            </div>
-            <div class="welcome-body">
-                <p class="welcome-greeting">السلام عليكم ورحمة الله وبركاته</p>
-                <p class="welcome-text">
-                    أنا <span class="arkan-name">أركان</span>، مرشدك في رحلة التفكير العميق والاستكشاف الفلسفي.
-                </p>
-                <p class="welcome-text">
-                    في هذا الموقع، ستجد <span class="highlight">5000 سؤال فريد</span> مصاغة بعناية لتوسيع آفاقك وتعميق تفكيرك في جوانب مختلفة من الحياة.
-                </p>
-                <div class="welcome-features">
-                    <div class="feature">
-                        <span class="feature-icon">🧠</span>
-                        <span class="feature-text">أسئلة شخصية</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🌍</span>
-                        <span class="feature-text">أسئلة عامة</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🕌</span>
-                        <span class="feature-text">أسئلة دينية</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">📚</span>
-                        <span class="feature-text">أسئلة ثقافية</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">❤️</span>
-                        <span class="feature-text">أسئلة عن الحب</span>
+        <!-- التطبيق الرئيسي -->
+        <div id="mainApp" class="main-app" style="display: none;">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-content">
+                    <h1 id="headerTitle">أسئلة أركان</h1>
+                    <div class="active-users-badge">
+                        <span class="badge-icon">👥</span>
+                        <span id="activeUsersCount">1</span>
                     </div>
                 </div>
-                <p class="welcome-closing">
-                    استعد لرحلة تفكير لن تنسيها، حيث كل سؤال هو بوابة نحو فهم أعمق لذاتك والعالم من حولك.
-                </p>
-                <p class="welcome-signature">✨ مع أركان، في رحلة التفكير العميق ✨</p>
-            </div>
-            <div class="welcome-buttons">
-                <button class="btn-primary" onclick="closeWelcome()">لنبدأ الرحلة</button>
-            </div>
+            </header>
+
+            <!-- محتوى الصفحات -->
+            <main class="app-main">
+                <!-- صفحة الأسئلة -->
+                <div id="questionsPage" class="page active">
+                    <div class="page-header">
+                        <h2>الأسئلة</h2>
+                        <button id="randomQuestionBtn" class="btn-icon">🎲</button>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="questionSearch" placeholder="ابحث عن سؤال...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <div id="questionsList" class="questions-list">
+                        <!-- يتم ملؤها بـ JavaScript -->
+                    </div>
+                </div>
+
+                <!-- صفحة الدردشة -->
+                <div id="chatPage" class="page">
+                    <div class="page-header">
+                        <h2>الدردشة الجماعية</h2>
+                        <span class="online-count" id="onlineCount">1 نشيط</span>
+                    </div>
+                    <div id="chatMessages" class="chat-messages">
+                        <!-- يتم ملؤها بـ JavaScript -->
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="اكتب رسالة...">
+                        <button id="sendChatBtn" class="btn-send">إرسال</button>
+                    </div>
+                </div>
+
+                <!-- صفحة الاقتباسات -->
+                <div id="quotesPage" class="page">
+                    <div class="page-header">
+                        <h2>الاقتباسات</h2>
+                        <button id="randomQuoteBtn" class="btn-icon">✨</button>
+                    </div>
+                    <div id="quotesList" class="quotes-list">
+                        <!-- يتم ملؤها بـ JavaScript -->
+                    </div>
+                    <div class="add-quote-section">
+                        <textarea id="quoteInput" placeholder="أضف اقتباس جديد..."></textarea>
+                        <button id="addQuoteBtn" class="btn-primary">نشر اقتباس</button>
+                    </div>
+                </div>
+
+                <!-- صفحة العبارات -->
+                <div id="phrasesPage" class="page">
+                    <div class="page-header">
+                        <h2>العبارات</h2>
+                        <button id="randomPhraseBtn" class="btn-icon">💬</button>
+                    </div>
+                    <div id="phrasesList" class="phrases-list">
+                        <!-- يتم ملؤها بـ JavaScript -->
+                    </div>
+                    <div class="add-phrase-section">
+                        <textarea id="phraseInput" placeholder="أضف عبارة جديدة..."></textarea>
+                        <button id="addPhraseBtn" class="btn-primary">نشر عبارة</button>
+                    </div>
+                </div>
+
+                <!-- صفحة الملف الشخصي -->
+                <div id="profilePage" class="page">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">👤</div>
+                        <h2 id="profileName">الملف الشخصي</h2>
+                        <p id="profileAge" class="profile-age"></p>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="statComments">0</span>
+                            <span class="stat-label">تعليقات</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statQuotes">0</span>
+                            <span class="stat-label">اقتباسات</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statPhrases">0</span>
+                            <span class="stat-label">عبارات</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button id="editProfileBtn" class="btn-secondary">تعديل الملف</button>
+                        <button id="logoutBtn" class="btn-danger">تسجيل الخروج</button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- قائمة التنقل السفلية -->
+            <nav class="bottom-nav">
+                <button class="nav-item active" data-page="questionsPage">
+                    <span class="nav-icon">❓</span>
+                    <span class="nav-label">أسئلة</span>
+                </button>
+                <button class="nav-item" data-page="chatPage">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">دردشة</span>
+                </button>
+                <button class="nav-item" data-page="quotesPage">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-label">اقتباسات</span>
+                </button>
+                <button class="nav-item" data-page="phrasesPage">
+                    <span class="nav-icon">✍️</span>
+                    <span class="nav-label">عبارات</span>
+                </button>
+                <button class="nav-item" data-page="profilePage">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">ملفي</span>
+                </button>
+            </nav>
         </div>
     </div>
 
-    <!-- Modal للأسئلة -->
+    <!-- Modal لعرض السؤال كاملاً -->
     <div id="questionModal" class="modal" style="display: none;">
-        <div class="modal-content question-modal-extended">
+        <div class="modal-content">
             <button class="modal-close">&times;</button>
-            <h3>سؤالك للتفكير</h3>
-            <p id="modalQuestion"></p>
-            <div class="rating-buttons">
-                <button id="likeBtn" class="btn-like" title="إعجاب">👍</button>
-                <button id="dislikeBtn" class="btn-dislike" title="عدم إعجاب">👎</button>
-                <button id="favoriteBtn" class="btn-favorite" title="حفظ">♥️</button>
-            </div>
-            
-            <!-- قسم التعليقات -->
-            <div class="comments-section">
-                <div class="comments-header">
-                    <h4>💬 التعليقات المجتمعية</h4>
-                    <span class="comments-count" id="commentsCount">0</span>
+            <div class="question-full">
+                <h2 id="questionTitle"></h2>
+                <div class="question-comments" id="questionComments">
+                    <!-- يتم ملؤها بـ JavaScript -->
                 </div>
-                
-                <!-- نموذج إضافة تعليق -->
-                <div class="add-comment-form">
-                    <textarea id="commentInput" placeholder="شارك رأيك أو تأملك على هذا السؤال..." class="comment-input" maxlength="500"></textarea>
-                    <div class="comment-form-footer">
-                        <span class="char-count"><span id="charCount">0</span>/500</span>
-                        <button id="submitCommentBtn" class="btn-submit-comment">إرسال التعليق</button>
-                    </div>
-                </div>
-                
-                <!-- قائمة التعليقات -->
-                <div id="commentsList" class="comments-list">
-                    <p class="no-comments">لا توجد تعليقات بعد. كن أول من يعلق!</p>
-                </div>
-            </div>
-            
-            <div class="modal-buttons">
-                <button id="anotherBtn" class="btn-primary">سؤال آخر</button>
-                <button id="closeBtn" class="btn-secondary">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal صفحة عن أركان -->
-    <div id="aboutModal" class="modal" style="display: none;">
-        <div class="modal-content about-modal">
-            <button class="modal-close" onclick="closeAbout()">&times;</button>
-            <div class="about-header">
-                <h2>عن أسئلة أركان</h2>
-            </div>
-            <div class="about-body">
-                <div class="about-section">
-                    <h3>🎯 رؤيتنا</h3>
-                    <p>نؤمن أن الأسئلة العميقة هي مفتاح الحكمة والفهم. موقع أسئلة أركان يهدف إلى توفير منصة فريدة تجمع بين الفلسفة والتفكير النقدي والاستكشاف الذاتي.</p>
-                </div>
-                <div class="about-section">
-                    <h3>💡 من هو أركان؟</h3>
-                    <p>أركان هو مرشدك في رحلة التفكير العميق. اسمه مستوحى من كلمة "أركان" التي تعني الأساس والدعامة - فهو يمثل الأساس الذي يبني عليه الإنسان فهمه للعالم والحياة.</p>
-                </div>
-                <div class="about-section">
-                    <h3>📚 محتوى الموقع</h3>
-                    <p>يحتوي الموقع على <strong>5000 سؤال فريد</strong> موزعة على 5 أقسام:</p>
-                    <ul class="about-list">
-                        <li><strong>أسئلة شخصية:</strong> تتعمق في ذاتك وهويتك وقيمك</li>
-                        <li><strong>أسئلة عامة:</strong> تستكشف معاني الحياة والوجود</li>
-                        <li><strong>أسئلة دينية:</strong> تناقش الإيمان والروحانية</li>
-                        <li><strong>أسئلة ثقافية:</strong> تعكس على الحضارة والتراث</li>
-                        <li><strong>أسئلة عن الحب:</strong> تستقصي أعمق المشاعر الإنسانية</li>
-                    </ul>
-                </div>
-                <div class="about-section">
-                    <h3>🌟 كيفية الاستفادة</h3>
-                    <p>استخدم الموقع للتأمل والتفكير العميق. اقرأ الأسئلة ببطء، فكر فيها بعناية، وحاول الإجابة بصدق. لا تتسرع - الهدف ليس الإجابة السريعة بل الفهم العميق.</p>
-                </div>
-                <div class="about-section">
-                    <h3>✨ الميزات</h3>
-                    <p>يمكنك:</p>
-                    <ul class="about-list">
-                        <li>البحث عن أسئلة محددة</li>
-                        <li>الحصول على أسئلة عشوائية</li>
-                        <li>تقييم الأسئلة (إعجاب/عدم إعجاب)</li>
-                        <li>حفظ الأسئلة المفضلة</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="about-buttons">
-                <button class="btn-primary" onclick="closeAbout()">العودة للرئيسية</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal المفضلة -->
-    <div id="favoritesModal" class="modal" style="display: none;">
-        <div class="modal-content favorites-modal">
-            <button class="modal-close" onclick="closeFavorites()">&times;</button>
-            <div class="favorites-header">
-                <h2>❤️ الأسئلة المفضلة</h2>
-            </div>
-            <div id="favoritesList" class="favorites-list">
-                <p class="empty-message">لم تقم بحفظ أي أسئلة بعد</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal الإحصائيات -->
-    <div id="statsModal" class="modal" style="display: none;">
-        <div class="modal-content stats-modal">
-            <button class="modal-close" onclick="closeStats()">&times;</button>
-            <div class="stats-header">
-                <h2>📊 إحصائياتي</h2>
-            </div>
-            <div class="stats-body">
-                <div class="stat-item">
-                    <span class="stat-label">عدد الأسئلة المشاهدة:</span>
-                    <span class="stat-value" id="viewedCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">عدد الأسئلة المفضلة:</span>
-                    <span class="stat-value" id="favoriteCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">عدد الإعجابات:</span>
-                    <span class="stat-value" id="likeCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">عدد عدم الإعجابات:</span>
-                    <span class="stat-value" id="dislikeCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">نسبة الرضا:</span>
-                    <span class="stat-value" id="satisfactionRate">0%</span>
-                </div>
-            </div>
-            <div class="stats-buttons">
-                <button class="btn-primary" onclick="clearStats()">مسح الإحصائيات</button>
-                <button class="btn-secondary" onclick="closeStats()">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Share Modal -->
-    <div id="shareModal" class="modal" style="display: none;">
-        <div class="modal-content share-modal">
-            <button class="modal-close" onclick="closeShare()">&times;</button>
-            <div class="share-header">
-                <h2>📄 مشاركة السؤال</h2>
-            </div>
-            <div class="share-buttons">
-                <button class="share-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
-                <button class="share-btn facebook" onclick="shareOnFacebook()">📁 Facebook</button>
-                <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">📱 WhatsApp</button>
-                <button class="share-btn copy" onclick="copyToClipboard()">📋 نسخ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Categories Modal -->
-    <div id="categoriesModal" class="modal" style="display: none;">
-        <div class="modal-content categories-modal">
-            <button class="modal-close" onclick="closeCategories()">&times;</button>
-            <div class="modal-header">
-                <h2>🏷️ التصنيفات المتقدمة</h2>
-            </div>
-            <div id="categoriesList" class="categories-list"></div>
-        </div>
-    </div>
-
-    <!-- Daily Question Modal -->
-    <div id="dailyModal" class="modal" style="display: none;">
-        <div class="modal-content daily-modal">
-            <button class="modal-close" onclick="closeDaily()">&times;</button>
-            <div class="modal-header">
-                <h2>📅 السؤال اليومي</h2>
-                <p class="daily-date" id="dailyDate"></p>
-            </div>
-            <div class="daily-question-container">
-                <div class="daily-question" id="dailyQuestion"></div>
-                <div class="daily-actions">
-                    <button class="daily-btn" onclick="toggleDailyFavorite()">❤️ حفظ</button>
-                    <button class="daily-btn" onclick="shareDailyQuestion()">📤 مشاركة</button>
+                <div class="comment-input">
+                    <textarea id="commentInput" placeholder="أضف تعليق..."></textarea>
+                    <button id="addCommentBtn" class="btn-primary">إضافة تعليق</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Comments Modal -->
-    <div id="commentsModal" class="modal" style="display: none;">
-        <div class="modal-content comments-modal">
-            <button class="modal-close" onclick="closeComments()">&times;</button>
-            <div class="modal-header">
-                <h2>💬 التعليقات والنقاش</h2>
-            </div>
-            <div class="comments-container">
-                <div class="add-comment">
-                    <textarea id="commentInput" placeholder="أضف تعليقك هنا..."></textarea>
-                    <button onclick="addComment()" class="btn-add-comment">إرسال التعليق</button>
-                </div>
-                <div id="commentsList" class="comments-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="questions-data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
