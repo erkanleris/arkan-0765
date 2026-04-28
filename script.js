@@ -40,12 +40,14 @@ document.getElementById('loginForm')?.addEventListener('submit', (e) => {
     
     const name = document.getElementById('userName').value.trim();
     const age = parseInt(document.getElementById('userAge').value);
+    const gender = document.querySelector('input[name="userGender"]:checked')?.value;
 
-    if (name && age > 0) {
+    if (name && age > 0 && gender) {
         appData.user = {
             id: Date.now(),
             name: name,
             age: age,
+            gender: gender,
             joinDate: new Date().toISOString(),
             comments: 0,
             quotes: 0,
@@ -53,7 +55,9 @@ document.getElementById('loginForm')?.addEventListener('submit', (e) => {
         };
 
         saveData();
-        showApp();
+        showWelcomeModal();
+    } else {
+        alert('يرجى ملء جميع الحقول');
     }
 });
 
@@ -76,9 +80,14 @@ function showWelcomeModal() {
     }
 }
 
-// إغلاق رسالة الترحيب
+// إغلاق رسالة الترحيب والذهاب للتطبيق
 document.getElementById('closeWelcomeBtn')?.addEventListener('click', () => {
     document.getElementById('welcomeModal').classList.remove('active');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'flex';
+    updateProfile();
+    updateActiveUsers();
+    renderQuestions();
 });
 
 // تحديث الملف الشخصي

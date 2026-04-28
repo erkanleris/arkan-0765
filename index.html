@@ -28,11 +28,24 @@
                         <label for="userAge">عمرك</label>
                         <input type="number" id="userAge" placeholder="أدخل عمرك" min="1" max="120" required>
                     </div>
+                    <div class="form-group">
+                        <label for="userGender">الجنس</label>
+                        <div class="gender-options">
+                            <label class="gender-label">
+                                <input type="radio" name="userGender" value="male" required>
+                                <span class="gender-text">ذكر</span>
+                            </label>
+                            <label class="gender-label">
+                                <input type="radio" name="userGender" value="female" required>
+                                <span class="gender-text">أنثى</span>
+                            </label>
+                        </div>
+                    </div>
                     <div class="warning-box">
                         <span class="warning-icon">⚠️</span>
                         <p>لا تشارك معلومات شخصية حساسة أو بيانات بنكية</p>
                     </div>
-                    <button type="submit" class="btn-login">دخول</button>
+                    <button type="submit" class="btn-login">تسجيل</button>
                 </form>
             </div>
         </div>
