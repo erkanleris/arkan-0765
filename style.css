@@ -65,11 +65,24 @@ h1, h2, h3, h4, h5, h6 {
 .login-container {
     width: 100%;
     max-width: 400px;
-    background: var(--card-bg);
-    border-radius: 20px;
-    padding: 40px 20px;
-    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.1);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-radius: 25px;
+    padding: 50px 25px;
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.15), 0 0 40px rgba(106, 27, 154, 0.1);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .logo-section {
@@ -78,9 +91,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .logo-emoji {
-    font-size: 60px;
+    font-size: 70px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .logo-section h1 {
@@ -128,26 +147,50 @@ h1, h2, h3, h4, h5, h6 {
     background: rgba(212, 175, 55, 0.1);
 }
 
+.warning-box {
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 10px;
+    padding: 12px 15px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.warning-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.warning-box p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
 .btn-login {
     padding: 14px;
     background: linear-gradient(135deg, var(--primary), #c9a227);
     color: #000;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 10px;
+    width: 100%;
 }
 
 .btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
 }
 
 .btn-login:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 /* التطبيق الرئيسي */
@@ -641,15 +684,94 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .modal-content {
-    background: var(--card-bg);
-    border-radius: 15px;
-    padding: 25px;
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-radius: 20px;
+    padding: 30px;
     max-width: 500px;
     width: 100%;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.15);
+    animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.welcome-content {
+    text-align: center;
+}
+
+.welcome-header {
+    margin-bottom: 25px;
+}
+
+.welcome-emoji {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+.welcome-header h2 {
+    font-size: 28px;
+    color: var(--primary);
+    margin: 0;
+}
+
+.welcome-body {
+    margin-bottom: 25px;
+}
+
+.welcome-body p {
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.welcome-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.feature-item {
+    background: rgba(212, 175, 55, 0.05);
     border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.feature-icon {
+    font-size: 28px;
+}
+
+.feature-text {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .modal-close {

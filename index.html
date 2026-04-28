@@ -28,8 +28,44 @@
                         <label for="userAge">عمرك</label>
                         <input type="number" id="userAge" placeholder="أدخل عمرك" min="1" max="120" required>
                     </div>
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <p>لا تشارك معلومات شخصية حساسة أو بيانات بنكية</p>
+                    </div>
                     <button type="submit" class="btn-login">دخول</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- رسالة الترحيب -->
+        <div id="welcomeModal" class="modal">
+            <div class="modal-content welcome-content">
+                <div class="welcome-header">
+                    <span class="welcome-emoji">🎉</span>
+                    <h2>أهلاً وسهلاً!</h2>
+                </div>
+                <div class="welcome-body">
+                    <p id="welcomeMessage">مرحباً بك في أسئلة أركان</p>
+                    <div class="welcome-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span class="feature-text">آلاف الأسئلة المتنوعة</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">💬</span>
+                            <span class="feature-text">دردشة جماعية حية</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📖</span>
+                            <span class="feature-text">اقتباسات وعبارات ملهمة</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <span class="feature-text">مجتمع نشيط وآمن</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="closeWelcomeBtn" class="btn-primary">ابدأ الآن</button>
             </div>
         </div>
 

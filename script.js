@@ -64,7 +64,22 @@ function showApp() {
     updateProfile();
     updateActiveUsers();
     renderQuestions();
+    showWelcomeModal();
 }
+
+// إظهار رسالة الترحيب
+function showWelcomeModal() {
+    const modal = document.getElementById('welcomeModal');
+    if (modal && appData.user) {
+        document.getElementById('welcomeMessage').textContent = `مرحباً بك يا ${appData.user.name}! 👋`;
+        modal.classList.add('active');
+    }
+}
+
+// إغلاق رسالة الترحيب
+document.getElementById('closeWelcomeBtn')?.addEventListener('click', () => {
+    document.getElementById('welcomeModal').classList.remove('active');
+});
 
 // تحديث الملف الشخصي
 function updateProfile() {
@@ -357,6 +372,13 @@ document.getElementById('questionSearch')?.addEventListener('input', (e) => {
         card.addEventListener('click', () => showQuestionModal(question, index));
         container.appendChild(card);
     });
+});
+
+// إغلاق Modal بالنقر خارجه
+document.getElementById('welcomeModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'welcomeModal') {
+        document.getElementById('welcomeModal').classList.remove('active');
+    }
 });
 
 // تحميل البيانات عند بدء التطبيق
