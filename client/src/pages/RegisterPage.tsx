@@ -5,7 +5,6 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
 export default function RegisterPage() {
-  const [, navigate] = useLocation();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
@@ -36,13 +35,8 @@ export default function RegisterPage() {
       })
     );
 
-    // إعادة التوجيه إلى الصفحة الرئيسية
-    navigate("/");
-    
-    // إعادة تحميل الصفحة بعد التنقل
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // إعادة التوجيه إلى الصفحة الرئيسية مباشرة
+    window.location.href = "/";
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
