@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { useState, useEffect, useRef } from "react";
-import { Search, Sparkles, ChevronRight } from "lucide-react";
+import { Search, Sparkles, ChevronRight, MessageCircle } from "lucide-react";
 
 interface QuestionsData {
   [key: string]: string[];
@@ -343,6 +343,18 @@ export default function Home() {
               />
             ))}
           </div>
+        </section>
+
+        {/* Chat Button */}
+        <section className="mb-24 flex justify-center">
+          <Button
+            onClick={() => navigate("/chat")}
+            size="lg"
+            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg px-8 py-6 rounded-xl shadow-2xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-105"
+          >
+            <MessageCircle className="mr-2 h-6 w-6" />
+            دردشة المجتمع
+          </Button>
         </section>
 
         {/* Info Section */}
