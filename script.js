@@ -211,25 +211,53 @@ function showQuestionModal(question, index) {
             modal.classList.remove('active');
         };
     }
-}
-
-// معالجة الدردشة الجماعية
-document.getElementById('sendChatBtn')?.addEventListener('click', () => {
+// إضافة رسالة في الدردشة
+document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+    if (e.key !== 'Enter') return;
+    
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
-
+    
     if (text && appData.user) {
         const message = {
             author: appData.user.name,
             text: text,
             timestamp: new Date().toISOString(),
-            own: true
+            own: true,
+            id: Date.now()
         };
 
         appData.chatMessages.push(message);
         saveData();
         input.value = '';
+        
+        // إظهار الرسالة فوراً مع تأثير بصري
         renderChatMessages();
+        
+        // محاكاة رد من مستخدم آخر بعد ثانية
+        setTimeout(() => {
+            const randomUsers = ['أحمد', 'فاطمة', 'محمد', 'نور', 'سارة', 'علي'];
+            const randomReplies = [
+                'موافق تماماً! 👍',
+                'فكرة رائعة جداً! ✨',
+                'أتفق معك بنسبة 100%',
+                'شكراً على هذه الملاحظة',
+                'نقطة مهمة جداً',
+                'أحسنت! 🌟'
+            ];
+            
+            const reply = {
+                author: randomUsers[Math.floor(Math.random() * randomUsers.length)],
+                text: randomReplies[Math.floor(Math.random() * randomReplies.length)],
+                timestamp: new Date().toISOString(),
+                own: false,
+                id: Date.now() + 1
+            };
+            
+            appData.chatMessages.push(reply);
+            saveData();
+            renderChatMessages();
+        }, 1000);
     }
 });
 
@@ -240,9 +268,10 @@ function renderChatMessages() {
     
     container.innerHTML = '';
 
-    appData.chatMessages.slice(-20).forEach(msg => {
+    appData.chatMessages.slice(-20).forEach((msg, index) => {
         const div = document.createElement('div');
         div.className = `chat-message ${msg.own ? 'own' : ''}`;
+        div.style.animation = `slideUp 0.5s ease-out ${index * 0.05}s both`;
         div.innerHTML = `
             <div class="message-author">${msg.author}</div>
             <div class="message-text">${msg.text}</div>
@@ -251,7 +280,10 @@ function renderChatMessages() {
         container.appendChild(div);
     });
 
-    container.scrollTop = container.scrollHeight;
+    // تمرير سلس إلى آخر رسالة
+    setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+    }, 100);
 }
 
 // إضافة اقتباس
