@@ -1,0 +1,21 @@
+{
+  "name": "ask-arkan-web",
+  "version": "1.0.0",
+  "description": "موقع أسئلة أركان - منصة للأسئلة والحوارات العميقة",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^5.0.0",
+    "prettier": "^3.0.0"
+  }
+}
