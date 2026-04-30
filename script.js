@@ -366,3 +366,204 @@ function handleSearch() {
 
 // تهيئة التطبيق
 document.addEventListener('DOMContentLoaded', renderHome);
+
+
+// ===== رسالة الترحيب والزر الجديد =====
+
+// إظهار رسالة الترحيب
+function showWelcomeMessage() {
+    const root = document.getElementById('root');
+    const welcomeDiv = document.createElement('div');
+    welcomeDiv.id = 'welcome-banner';
+    welcomeDiv.style.cssText = `
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.1));
+        border: 2px solid #d4af37;
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 900px;
+        text-align: center;
+        color: #fff;
+        animation: slideDown 0.5s ease-out;
+    `;
+    
+    welcomeDiv.innerHTML = `
+        <h2 style="color: #d4af37; font-size: 2em; margin-bottom: 1rem;">🌟 مرحباً بك في أسئلة أركان</h2>
+        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
+            منصة تفاعلية تجمع بين الأسئلة المثيرة للتفكير والفلسفة العميقة
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">✨ 5000+ سؤال</h3>
+                <p style="color: #b0b0b0; margin: 0;">أسئلة فريدة ومتنوعة</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">🎯 5 أقسام</h3>
+                <p style="color: #b0b0b0; margin: 0;">شخصية، عامة، دينية، ثقافية، الحب</p>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
+                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">🚀 بحث متقدم</h3>
+                <p style="color: #b0b0b0; margin: 0;">ابحث عن الأسئلة بسهولة</p>
+            </div>
+        </div>
+        
+        <button onclick="closeWelcomeMessage()" style="
+            background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+            color: #000;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            ✕ إغلاق
+        </button>
+    `;
+    
+    const main = document.querySelector('main');
+    if (main) {
+        main.insertBefore(welcomeDiv, main.firstChild);
+    }
+}
+
+function closeWelcomeMessage() {
+    const welcomeDiv = document.getElementById('welcome-banner');
+    if (welcomeDiv) {
+        welcomeDiv.style.animation = 'slideUp 0.3s ease-out';
+        setTimeout(() => welcomeDiv.remove(), 300);
+    }
+}
+
+function addBuildWebsiteButton() {
+    const main = document.querySelector('main');
+    if (!main) return;
+    
+    const buildDiv = document.createElement('section');
+    buildDiv.style.cssText = `
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(147, 51, 234, 0.1));
+        border: 2px solid #d4af37;
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        margin: 3rem auto;
+        max-width: 900px;
+        text-align: center;
+    `;
+    
+    buildDiv.innerHTML = `
+        <h2 style="color: #d4af37; font-size: 2em; margin-bottom: 1rem;">🌐 هل تريد موقعك الخاص؟</h2>
+        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 2rem;">
+            نحن نقدم أفضل خدمات بناء وتطوير المواقع بأفضل الأسعار
+        </p>
+        
+        <button onclick="showBuildWebsiteInstructions()" style="
+            background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+            color: #000;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(212, 175, 55, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 20px rgba(212, 175, 55, 0.3)'">
+            🚀 قم ببناء موقعك الآن
+        </button>
+    `;
+    
+    main.appendChild(buildDiv);
+}
+
+function showBuildWebsiteInstructions() {
+    const root = document.getElementById('root');
+    root.innerHTML = `
+        <header>
+            <div class="header-container">
+                <div class="logo">✨ أسئلة أركان</div>
+                <button onclick="goBack()" style="
+                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                    color: #000;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">← العودة</button>
+            </div>
+        </header>
+        
+        <main style="max-width: 900px; margin: 0 auto; padding: 3rem 2rem;">
+            <h1 style="color: #d4af37; text-align: center; font-size: 2.5em; margin-bottom: 1rem;">🌐 بناء موقعك الخاص</h1>
+            
+            <section style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
+                <h2 style="color: #d4af37; margin-bottom: 1.5rem;">📋 خطوات العمل:</h2>
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
+                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">1️⃣ التواصل الأولي</h3>
+                        <p style="color: #b0b0b0; margin: 0;">تواصل معنا عبر Instagram (@erkanleris)</p>
+                    </div>
+                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
+                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">2️⃣ الاستشارة المجانية</h3>
+                        <p style="color: #b0b0b0; margin: 0;">نناقش متطلباتك ونقدم اقتراحاً مفصلاً</p>
+                    </div>
+                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
+                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">3️⃣ التصميم والتطوير</h3>
+                        <p style="color: #b0b0b0; margin: 0;">نقوم بتصميم وتطوير موقعك بأحدث التقنيات</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.1)); border: 2px solid #d4af37; border-radius: 1rem; padding: 2rem; text-align: center;">
+                <h2 style="color: #d4af37; margin-bottom: 1rem;">📞 تواصل معنا الآن</h2>
+                <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
+                    حسابنا على Instagram: <strong style="color: #d4af37;">@erkanleris</strong>
+                </p>
+                <a href="https://instagram.com/erkanleris" target="_blank" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                    color: #000;
+                    text-decoration: none;
+                    padding: 1rem 2.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">
+                    📲 تواصل على Instagram
+                </a>
+            </section>
+        </main>
+    `;
+}
+
+function goBack() {
+    renderHome();
+    setTimeout(() => {
+        showWelcomeMessage();
+        addBuildWebsiteButton();
+    }, 100);
+}
+
+const originalRenderHome = renderHome;
+renderHome = function() {
+    originalRenderHome();
+    setTimeout(() => {
+        showWelcomeMessage();
+        addBuildWebsiteButton();
+    }, 100);
+};
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideDown {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(-20px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
