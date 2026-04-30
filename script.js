@@ -365,7 +365,13 @@ function handleSearch() {
 }
 
 // تهيئة التطبيق
-document.addEventListener('DOMContentLoaded', renderHome);
+document.addEventListener('DOMContentLoaded', () => {
+    renderHome();
+    setTimeout(() => {
+        showWelcomeMessage();
+        addBuildWebsiteButton();
+    }, 100);
+});
 
 
 // ===== رسالة الترحيب والزر الجديد =====
@@ -546,14 +552,7 @@ function goBack() {
     }, 100);
 }
 
-const originalRenderHome = renderHome;
-renderHome = function() {
-    originalRenderHome();
-    setTimeout(() => {
-        showWelcomeMessage();
-        addBuildWebsiteButton();
-    }, 100);
-};
+
 
 const style = document.createElement('style');
 style.textContent = `
