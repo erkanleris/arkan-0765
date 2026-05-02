@@ -550,6 +550,7 @@ function goBack() {
     setTimeout(() => {
         showWelcomeMessage();
         addBuildWebsiteButton();
+        addTelegramBotButton();
     }, 100);
 }
 
