@@ -370,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         showWelcomeMessage();
         addBuildWebsiteButton();
+        addTelegramBotButton();
     }, 100);
 });
 
@@ -566,3 +567,121 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+// دالة إضافة زر بوت الربح في التليجرام
+function addTelegramBotButton() {
+    const main = document.querySelector('main');
+    if (!main) return;
+    
+    const telegramDiv = document.createElement('section');
+    telegramDiv.style.cssText = `
+        background: linear-gradient(135deg, rgba(0, 136, 204, 0.15), rgba(0, 200, 255, 0.1));
+        border: 2px solid #00d4ff;
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        margin: 3rem auto;
+        max-width: 900px;
+        text-align: center;
+    `;
+    
+    telegramDiv.innerHTML = `
+        <h2 style="color: #00d4ff; font-size: 2em; margin-bottom: 1rem;">💰 اربح الآن مع بوت التليجرام</h2>
+        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 2rem;">
+            كل تسجيل يضيف لك نقاط لتحصل على جوائز حقيقية
+        </p>
+        
+        <button onclick="showTelegramBotInstructions()" style="
+            background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
+            color: #fff;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(0, 212, 255, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 20px rgba(0, 212, 255, 0.3)'">
+            🚀 انضم الآن وابدأ الربح
+        </button>
+    `;
+    
+    main.appendChild(telegramDiv);
+}
+
+// دالة عرض تعليمات بوت الربح
+function showTelegramBotInstructions() {
+    const root = document.getElementById('root');
+    root.innerHTML = `
+        <header>
+            <div class="header-container">
+                <div class="logo">✨ أسئلة أركان</div>
+                <button onclick="goBack()" style="
+                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                    color: #000;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">← العودة</button>
+            </div>
+        </header>
+        
+        <main style="max-width: 900px; margin: 0 auto; padding: 3rem 2rem;">
+            <h1 style="color: #00d4ff; text-align: center; font-size: 2.5em; margin-bottom: 1rem;">💰 بوت الربح على التليجرام</h1>
+            
+            <section style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
+                <h2 style="color: #00d4ff; margin-bottom: 1.5rem;">📋 كيفية الاستخدام:</h2>
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">1️⃣ انضم للبوت</h3>
+                        <p style="color: #b0b0b0; margin: 0;">اضغط على رابط البوت وابدأ الدردشة</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">2️⃣ سجل بيانات</h3>
+                        <p style="color: #b0b0b0; margin: 0;">أكمل عملية التسجيل البسيطة والسريعة</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">3️⃣ اجمع النقاط</h3>
+                        <p style="color: #b0b0b0; margin: 0;">كل تسجيل يضيف نقاط لحسابك</p>
+                    </div>
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
+                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">4️⃣ احصل على جوائز</h3>
+                        <p style="color: #b0b0b0; margin: 0;">استبدل نقاطك بجوائز حقيقية</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 136, 204, 0.1)); border: 2px solid #00d4ff; border-radius: 1rem; padding: 2rem; text-align: center;">
+                <h2 style="color: #00d4ff; margin-bottom: 1rem;">🎁 المميزات:</h2>
+                <ul style="color: #b0b0b0; text-align: right; display: inline-block;">
+                    <li style="margin-bottom: 0.5rem;">✅ جوائز حقيقية وقيمة</li>
+                    <li style="margin-bottom: 0.5rem;">✅ عملية سهلة وسريعة</li>
+                    <li style="margin-bottom: 0.5rem;">✅ دعم عملاء متميز</li>
+                    <li style="margin-bottom: 0.5rem;">✅ آمن وموثوق</li>
+                </ul>
+            </section>
+            
+            <section style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 136, 204, 0.1)); border: 2px solid #00d4ff; border-radius: 1rem; padding: 2rem; text-align: center;">
+                <h2 style="color: #00d4ff; margin-bottom: 1rem;">🔗 انضم الآن</h2>
+                <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
+                    اضغط على الزر أدناه للانضمام إلى بوت الربح
+                </p>
+                <a href="https://t.me/ArbahNowBot" target="_blank" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
+                    color: #fff;
+                    text-decoration: none;
+                    padding: 1rem 2.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    font-size: 1.1em;
+                    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+                ">
+                    🚀 انضم إلى البوت الآن
+                </a>
+            </section>
+        </main>
+    `;
+}
