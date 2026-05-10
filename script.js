@@ -124,8 +124,27 @@ const questionsData = {
             "ما الفرق بين الحب والصداقة؟"
         ];
         return questions[(i * 19 + 29) % questions.length] + " (" + (i + 1) + ")";
-    })
-
+    }),
+    poems: {
+        sad: [
+            { title: "في الحزن", poet: "الشاعر المجهول", text: "ألم يان الأوان بعد؟\nحزن ابتعد عنّي ودع جرحي يزل همّي\nوإنّي بك يا حزني غير العذاب لا أجني" },
+            { title: "دموع الليل", poet: "الشاعر المجهول", text: "أبشرك ماعاد يوجعني فراق\nوأقسى وجع فيني يزول بثواني\nعودت قلبي إذا حمل هم أو ضاق\nأرمي وما أسأل عن اللي رماني" },
+            { title: "وحدة الليل", poet: "الشاعر المجهول", text: "هني من هو هموم الليل ما جنه\nيسهر الليل ويبكي على حاله\nقلبه ينزف من جروح ما شفيت\nوالدموع تنهمر على خده الشاحب" },
+            { title: "الألم الصامت", poet: "الشاعر المجهول", text: "ألم صامت يعتصر القلب\nحزن عميق لا يُعبّر بالكلمات\nروح تئن من الأسى والوجع\nعينان تبحثان عن نور في الظلام" }
+        ],
+        love: [
+            { title: "في الحب", poet: "الشاعر المجهول", text: "ولا تسألني عن اسمي فقد نسيته عندما أحببتك\nكنت انوي ان احفر اسمك على قلبي\nولكنني خشيت أن تزعجك دقات قلبي" },
+            { title: "عشق الروح", poet: "الشاعر المجهول", text: "أنت الكلام الجميل يغار من حرفك ياحلو\nعذرك معاي وحلو تقصيرك\nيا ليتني كنت اعرفك قبل لا اعرفك\nما كان غامرت بإحساسي مع غيرك" },
+            { title: "قلبي وعيناك", poet: "الشاعر المجهول", text: "قلبي وعيناكِ والأيام بينهما\nدربٌ طويلٌ تعبنا من مآسيه\nإن يخفقِ القلب كيف العمر نرجعه\nكل الذي مات فينا كيف نحييه" },
+            { title: "الشوق", poet: "الشاعر المجهول", text: "الشوق درب طويل ينتهي بك\nفي أحضان من تحب وتشتاق\nحبك يملأ روحي بالنور\nوذكرك يعطيني قوة لأستمر" }
+        ],
+        separation: [
+            { title: "الفراق", poet: "الشاعر المجهول", text: "خذني إليكَ إذا أردتَ بقاءَنا\nأمّا الفراقَ.. فما أقولُ لأمنعَك؟\nواللهُ يَعلَمُ حالنا رغمَ ابتعادكَ\nكنتُ وحدي أتبعك" },
+            { title: "الوداع", poet: "الشاعر المجهول", text: "لولا الفراقُ لمَا بكيتُ على الأيام\nلولا الفراقُ لمَا عرفتُ معنى الألم\nلولا الفراقُ لمَا تعلمتُ أن الحب\nقد يكون أقسى من الموت" },
+            { title: "البعد", poet: "الشاعر المجهول", text: "تالي نهاري وقت في المرقب العالي\nأنتظرك في كل شروق وغروب\nبراسك يداعبني نسيم الشوق\nوقلبي ينبض باسمك في كل نبضة" },
+            { title: "الاشتياق", poet: "الشاعر المجهول", text: "أشتاق إليك في الصباح والمساء\nأشتاق إلى صوتك وضحكتك وعطرك\nأشتاق إلى لحظات كنا معاً فيها\nحين كان الحب يملأ كل مكان حولنا" }
+        ]
+    }
 };
 
 const categories = [
@@ -133,7 +152,14 @@ const categories = [
     { id: 'general', name: 'أسئلة عامة', icon: '🌍', color: 'from-green-600 to-green-400' },
     { id: 'religious', name: 'أسئلة دينية', icon: '🕌', color: 'from-yellow-600 to-yellow-400' },
     { id: 'cultural', name: 'أسئلة ثقافية', icon: '📚', color: 'from-purple-600 to-purple-400' },
-    { id: 'love', name: 'أسئلة عن الحب', icon: '❤️', color: 'from-red-600 to-red-400' }
+    { id: 'love', name: 'أسئلة عن الحب', icon: '❤️', color: 'from-red-600 to-red-400' },
+    { id: 'poems', name: 'الأشعار', icon: '✨', color: 'from-pink-600 to-pink-400' }
+];
+
+const poemSubcategories = [
+    { id: 'sad', name: 'شعر حزين', icon: '😢', color: 'from-gray-600 to-gray-400' },
+    { id: 'love', name: 'شعر حب', icon: '💕', color: 'from-red-600 to-red-400' },
+    { id: 'separation', name: 'شعر فراق', icon: '💔', color: 'from-orange-600 to-orange-400' }
 ];
 
 // عناصر DOM
@@ -157,43 +183,39 @@ function renderHome() {
                 </div>
             </div>
         </header>
-
         <main>
             <section class="hero">
                 <h1>أهلاً بك في عالم التفكير العميق</h1>
-                <p>استكشف آلاف الأسئلة التي ستغير نظرتك للأشياء وتوسع آفاقك الفكرية والفلسفية</p>
+                <p>استكشف آلاف الأسئلة والأشعار التي ستغير نظرتك للأشياء وتوسع آفاقك الفكرية والفلسفية</p>
                 <button class="btn-primary" onclick="getRandomQuestion()">
                     ✨ سؤال عشوائي من كل الأقسام
                 </button>
             </section>
-
             <section>
-                <h2 class="categories-title">استكشف الأقسام الخمسة</h2>
+                <h2 class="categories-title">استكشف الأقسام</h2>
                 <div class="categories-grid">
                     ${categories.map(cat => `
                         <div class="category-card" onclick="viewCategory('${cat.id}')">
                             <div class="category-icon">${cat.icon}</div>
                             <div class="category-name">${cat.name}</div>
-                            <div class="category-count">50 سؤال</div>
+                            <div class="category-count">${cat.id === 'poems' ? '12 شعر' : '1000 سؤال'}</div>
                         </div>
                     `).join('')}
                 </div>
             </section>
-
             <section class="info-section">
-                <h2>5000 سؤال عميق ومميز</h2>
-                <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، كل سؤال مصاغ بعناية ليكون عميقاً وفلسفياً ويدفعك للتفكير الحقيقي.</p>
+                <h2>5000 سؤال عميق + أشعار مميزة</h2>
+                <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، بالإضافة إلى مجموعة مختارة من الأشعار الجميلة في أقسام (حزين، حب، فراق).</p>
                 <div class="stats-grid">
                     ${categories.map(cat => `
                         <div class="stat-item">
-                            <div class="stat-number">1000</div>
+                            <div class="stat-number">${cat.id === 'poems' ? '12' : '1000'}</div>
                             <div class="stat-label">${cat.name}</div>
                         </div>
                     `).join('')}
                 </div>
             </section>
         </main>
-
         <div class="modal">
             <div class="modal-content">
                 <button class="modal-close" onclick="closeModal()">✕</button>
@@ -206,136 +228,190 @@ function renderHome() {
             </div>
         </div>
     `;
-
-    // إعادة ربط الأحداث
-    document.querySelector('.search-btn').addEventListener('click', handleSearch);
-    document.querySelector('.search-box input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleSearch();
-    });
+    attachEventListeners();
 }
 
-// الحصول على سؤال عشوائي
-function getRandomQuestion() {
-    let allQuestions = [];
-    Object.values(questionsData).forEach(questions => {
-        allQuestions = allQuestions.concat(questions);
-    });
-
-    if (allQuestions.length > 0) {
-        const randomIdx = Math.floor(Math.random() * allQuestions.length);
-        const question = allQuestions[randomIdx];
-        showModal(question);
-    }
-}
-
-// عرض الفئة
+// عرض فئة معينة
 function viewCategory(categoryId) {
-    const category = categories.find(c => c.id === categoryId);
-    const questions = questionsData[categoryId];
-
-    root.innerHTML = `
-        <header>
-            <div class="header-container">
-                <button class="btn-primary" onclick="renderHome()" style="margin-left: auto;">← العودة</button>
-            </div>
-        </header>
-
-        <main>
-            <section class="hero">
-                <h1>${category.icon} ${category.name}</h1>
-                <p>استكشف ${questions.length} سؤال عميق في هذا القسم</p>
-                <button class="btn-primary" onclick="getRandomQuestionFromCategory('${categoryId}')">
-                    ✨ سؤال عشوائي
-                </button>
-            </section>
-
-            <section>
+    if (categoryId === 'poems') {
+        viewPoemCategories();
+    } else {
+        const questions = questionsData[categoryId];
+        const category = categories.find(c => c.id === categoryId);
+        root.innerHTML = `
+            <header>
+                <div class="header-container">
+                    <div class="logo">✨ أسئلة أركان</div>
+                    <button onclick="goBack()" style="
+                        background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                        color: #000;
+                        border: none;
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 50px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    ">← العودة</button>
+                </div>
+            </header>
+            <main>
+                <h1 style="text-align: center; margin-bottom: 2rem; color: #d4af37;">${category.icon} ${category.name}</h1>
                 <div class="questions-list">
-                    ${questions.map((q, idx) => `
-                        <div class="question-item" onclick="showModal('${q}')">
-                            <span class="question-number">${idx + 1}</span>
+                    ${questions.slice(0, 50).map((q, i) => `
+                        <div class="question-item" onclick="showQuestion('${q.replace(/'/g, "\\'")}')">
+                            <span class="question-number">${i + 1}</span>
                             <span class="question-text">${q}</span>
                         </div>
                     `).join('')}
                 </div>
-            </section>
-        </main>
+            </main>
+            <div class="modal">
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal()">✕</button>
+                    <div class="modal-title">السؤال</div>
+                    <div class="modal-question"></div>
+                    <div class="modal-buttons">
+                        <button class="btn-primary" onclick="getRandomQuestion()">سؤال آخر</button>
+                        <button class="btn-primary" onclick="closeModal()">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        attachEventListeners();
+    }
+}
 
+// عرض أقسام الأشعار
+function viewPoemCategories() {
+    root.innerHTML = `
+        <header>
+            <div class="header-container">
+                <div class="logo">✨ أسئلة أركان</div>
+                <button onclick="goBack()" style="
+                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                    color: #000;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">← العودة</button>
+            </div>
+        </header>
+        <main>
+            <h1 style="text-align: center; margin-bottom: 3rem; color: #d4af37;">✨ الأشعار</h1>
+            <div class="categories-grid">
+                ${poemSubcategories.map(subcat => `
+                    <div class="category-card" onclick="viewPoems('${subcat.id}')">
+                        <div class="category-icon">${subcat.icon}</div>
+                        <div class="category-name">${subcat.name}</div>
+                        <div class="category-count">${questionsData.poems[subcat.id].length} أشعار</div>
+                    </div>
+                `).join('')}
+            </div>
+        </main>
         <div class="modal">
             <div class="modal-content">
                 <button class="modal-close" onclick="closeModal()">✕</button>
-                <div class="modal-title">سؤالك للتفكير</div>
+                <div class="modal-title">الشعر</div>
                 <div class="modal-question"></div>
                 <div class="modal-buttons">
-                    <button class="btn-primary" onclick="getRandomQuestionFromCategory('${categoryId}')">سؤال آخر</button>
                     <button class="btn-primary" onclick="closeModal()">إغلاق</button>
                 </div>
             </div>
         </div>
     `;
+    attachEventListeners();
+}
 
-    // إضافة أنماط لقائمة الأسئلة
-    const style = document.createElement('style');
-    style.textContent = `
-        .questions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .question-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .question-item:hover {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
-            border-color: var(--primary);
-            transform: translateX(-5px);
-        }
-
-        .question-number {
-            color: var(--primary);
-            font-weight: bold;
-            min-width: 2rem;
-            text-align: center;
-        }
-
-        .question-text {
-            flex: 1;
-            color: var(--text);
-        }
+// عرض الأشعار في قسم معين
+function viewPoems(subcategoryId) {
+    const poems = questionsData.poems[subcategoryId];
+    const subcat = poemSubcategories.find(s => s.id === subcategoryId);
+    root.innerHTML = `
+        <header>
+            <div class="header-container">
+                <div class="logo">✨ أسئلة أركان</div>
+                <button onclick="goBack()" style="
+                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
+                    color: #000;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">← العودة</button>
+            </div>
+        </header>
+        <main>
+            <h1 style="text-align: center; margin-bottom: 2rem; color: #d4af37;">${subcat.icon} ${subcat.name}</h1>
+            <div class="poems-list">
+                ${poems.map((poem, i) => `
+                    <div class="poem-item" onclick="showPoem(${i}, '${subcategoryId}')">
+                        <div class="poem-title">${poem.title}</div>
+                        <div class="poem-poet">- ${poem.poet}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </main>
+        <div class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">✕</button>
+                <div class="modal-title">الشعر</div>
+                <div class="modal-question"></div>
+                <div class="modal-buttons">
+                    <button class="btn-primary" onclick="closeModal()">إغلاق</button>
+                </div>
+            </div>
+        </div>
     `;
-    document.head.appendChild(style);
+    attachEventListeners();
 }
 
-// الحصول على سؤال عشوائي من فئة معينة
-function getRandomQuestionFromCategory(categoryId) {
-    const questions = questionsData[categoryId];
-    if (questions.length > 0) {
-        const randomIdx = Math.floor(Math.random() * questions.length);
-        showModal(questions[randomIdx]);
-    }
-}
-
-// عرض Modal
-function showModal(question) {
+// عرض شعر معين
+function showPoem(index, subcategoryId) {
+    const poem = questionsData.poems[subcategoryId][index];
     const modal = document.querySelector('.modal');
-    const modalQuestion = document.querySelector('.modal-question');
-    if (modal && modalQuestion) {
-        modalQuestion.textContent = question;
-        modal.classList.add('active');
-    }
+    const modalContent = document.querySelector('.modal-content');
+    
+    modalContent.innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-title">${poem.title}</div>
+        <div style="text-align: center; margin-bottom: 1rem; color: #b0b0b0;">- ${poem.poet} -</div>
+        <div class="modal-question" style="white-space: pre-line; line-height: 2;">${poem.text}</div>
+        <div class="modal-buttons">
+            <button class="btn-primary" onclick="closeModal()">إغلاق</button>
+        </div>
+    `;
+    modal.classList.add('active');
 }
 
-// إغلاق Modal
+// عرض سؤال عشوائي
+function getRandomQuestion() {
+    const categoryKeys = Object.keys(questionsData).filter(k => k !== 'poems');
+    const randomCategory = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+    const questions = questionsData[randomCategory];
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    showQuestion(randomQuestion);
+}
+
+// عرض سؤال معين
+function showQuestion(question) {
+    const modal = document.querySelector('.modal');
+    const modalContent = document.querySelector('.modal-content');
+    
+    modalContent.innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-title">سؤالك للتفكير</div>
+        <div class="modal-question">${question}</div>
+        <div class="modal-buttons">
+            <button class="btn-primary" onclick="getRandomQuestion()">سؤال آخر</button>
+            <button class="btn-primary" onclick="closeModal()">إغلاق</button>
+        </div>
+    `;
+    modal.classList.add('active');
+}
+
+// إغلاق الـ modal
 function closeModal() {
     const modal = document.querySelector('.modal');
     if (modal) {
@@ -343,346 +419,50 @@ function closeModal() {
     }
 }
 
-// البحث عن سؤال
-function handleSearch() {
-    const searchInput = document.querySelector('.search-box input');
-    const searchTerm = searchInput.value.trim().toLowerCase();
-
-    if (!searchTerm) return;
-
-    let results = [];
-    Object.values(questionsData).forEach(questions => {
-        const matches = questions.filter(q => q.toLowerCase().includes(searchTerm));
-        results = results.concat(matches);
-    });
-
-    if (results.length > 0) {
-        const randomIdx = Math.floor(Math.random() * results.length);
-        showModal(results[randomIdx]);
-    } else {
-        alert('لم يتم العثور على نتائج');
-    }
-}
-
-// تهيئة التطبيق
-document.addEventListener('DOMContentLoaded', () => {
-    renderHome();
-    setTimeout(() => {
-        showWelcomeMessage();
-        addBuildWebsiteButton();
-        addTelegramBotButton();
-    }, 100);
-});
-
-
-// ===== رسالة الترحيب والزر الجديد =====
-
-// إظهار رسالة الترحيب
-function showWelcomeMessage() {
-    const root = document.getElementById('root');
-    const welcomeDiv = document.createElement('div');
-    welcomeDiv.id = 'welcome-banner';
-    welcomeDiv.style.cssText = `
-        background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.1));
-        border: 2px solid #d4af37;
-        border-radius: 1rem;
-        padding: 2rem;
-        margin: 2rem auto;
-        max-width: 900px;
-        text-align: center;
-        color: #fff;
-        animation: slideDown 0.5s ease-out;
-    `;
-    
-    welcomeDiv.innerHTML = `
-        <h2 style="color: #d4af37; font-size: 2em; margin-bottom: 1rem;">🌟 مرحباً بك في أسئلة أركان</h2>
-        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
-            منصة تفاعلية تجمع بين الأسئلة المثيرة للتفكير والفلسفة العميقة
-        </p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
-                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">✨ 5000+ سؤال</h3>
-                <p style="color: #b0b0b0; margin: 0;">أسئلة فريدة ومتنوعة</p>
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
-                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">🎯 5 أقسام</h3>
-                <p style="color: #b0b0b0; margin: 0;">شخصية، عامة، دينية، ثقافية، الحب</p>
-            </div>
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(212, 175, 55, 0.3);">
-                <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">🚀 بحث متقدم</h3>
-                <p style="color: #b0b0b0; margin: 0;">ابحث عن الأسئلة بسهولة</p>
-            </div>
-        </div>
-        
-        <button onclick="closeWelcomeMessage()" style="
-            background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
-            color: #000;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            ✕ إغلاق
-        </button>
-    `;
-    
-    const main = document.querySelector('main');
-    if (main) {
-        main.insertBefore(welcomeDiv, main.firstChild);
-    }
-}
-
-function closeWelcomeMessage() {
-    const welcomeDiv = document.getElementById('welcome-banner');
-    if (welcomeDiv) {
-        welcomeDiv.style.animation = 'slideUp 0.3s ease-out';
-        setTimeout(() => welcomeDiv.remove(), 300);
-    }
-}
-
-function addBuildWebsiteButton() {
-    const main = document.querySelector('main');
-    if (!main) return;
-    
-    const buildDiv = document.createElement('section');
-    buildDiv.style.cssText = `
-        background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(147, 51, 234, 0.1));
-        border: 2px solid #d4af37;
-        border-radius: 1rem;
-        padding: 3rem 2rem;
-        margin: 3rem auto;
-        max-width: 900px;
-        text-align: center;
-    `;
-    
-    buildDiv.innerHTML = `
-        <h2 style="color: #d4af37; font-size: 2em; margin-bottom: 1rem;">🌐 هل تريد موقعك الخاص؟</h2>
-        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 2rem;">
-            نحن نقدم أفضل خدمات بناء وتطوير المواقع بأفضل الأسعار
-        </p>
-        
-        <button onclick="showBuildWebsiteInstructions()" style="
-            background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
-            color: #000;
-            border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(212, 175, 55, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 20px rgba(212, 175, 55, 0.3)'">
-            🚀 قم ببناء موقعك الآن
-        </button>
-    `;
-    
-    main.appendChild(buildDiv);
-}
-
-function showBuildWebsiteInstructions() {
-    const root = document.getElementById('root');
-    root.innerHTML = `
-        <header>
-            <div class="header-container">
-                <div class="logo">✨ أسئلة أركان</div>
-                <button onclick="goBack()" style="
-                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
-                    color: #000;
-                    border: none;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 50px;
-                    font-weight: bold;
-                    cursor: pointer;
-                ">← العودة</button>
-            </div>
-        </header>
-        
-        <main style="max-width: 900px; margin: 0 auto; padding: 3rem 2rem;">
-            <h1 style="color: #d4af37; text-align: center; font-size: 2.5em; margin-bottom: 1rem;">🌐 بناء موقعك الخاص</h1>
-            
-            <section style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
-                <h2 style="color: #d4af37; margin-bottom: 1.5rem;">📋 خطوات العمل:</h2>
-                <div style="display: grid; gap: 1.5rem;">
-                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
-                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">1️⃣ التواصل الأولي</h3>
-                        <p style="color: #b0b0b0; margin: 0;">تواصل معنا عبر Instagram (@erkanleris)</p>
-                    </div>
-                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
-                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">2️⃣ الاستشارة المجانية</h3>
-                        <p style="color: #b0b0b0; margin: 0;">نناقش متطلباتك ونقدم اقتراحاً مفصلاً</p>
-                    </div>
-                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #d4af37;">
-                        <h3 style="color: #d4af37; margin: 0 0 0.5rem 0;">3️⃣ التصميم والتطوير</h3>
-                        <p style="color: #b0b0b0; margin: 0;">نقوم بتصميم وتطوير موقعك بأحدث التقنيات</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.1)); border: 2px solid #d4af37; border-radius: 1rem; padding: 2rem; text-align: center;">
-                <h2 style="color: #d4af37; margin-bottom: 1rem;">📞 تواصل معنا الآن</h2>
-                <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
-                    حسابنا على Instagram: <strong style="color: #d4af37;">@erkanleris</strong>
-                </p>
-                <a href="https://instagram.com/erkanleris" target="_blank" style="
-                    display: inline-block;
-                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
-                    color: #000;
-                    text-decoration: none;
-                    padding: 1rem 2.5rem;
-                    border-radius: 50px;
-                    font-weight: bold;
-                    cursor: pointer;
-                ">
-                    📲 تواصل على Instagram
-                </a>
-            </section>
-        </main>
-    `;
-}
-
+// العودة للصفحة الرئيسية
 function goBack() {
     renderHome();
-    setTimeout(() => {
-        showWelcomeMessage();
-        addBuildWebsiteButton();
-        addTelegramBotButton();
-    }, 100);
 }
 
-
-
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideDown {
-        from { transform: translateY(-20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+// إرفاق مستمعي الأحداث
+function attachEventListeners() {
+    const searchBtn = document.querySelector('.search-btn');
+    const searchInput = document.querySelector('.search-box input');
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', searchQuestions);
     }
-    @keyframes slideUp {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(-20px); opacity: 0; }
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchQuestions();
+        });
     }
-`;
-document.head.appendChild(style);
-// دالة إضافة زر بوت الربح في التليجرام
-function addTelegramBotButton() {
-    const main = document.querySelector('main');
-    if (!main) return;
-    
-    const telegramDiv = document.createElement('section');
-    telegramDiv.style.cssText = `
-        background: linear-gradient(135deg, rgba(0, 136, 204, 0.15), rgba(0, 200, 255, 0.1));
-        border: 2px solid #00d4ff;
-        border-radius: 1rem;
-        padding: 3rem 2rem;
-        margin: 3rem auto;
-        max-width: 900px;
-        text-align: center;
-    `;
-    
-    telegramDiv.innerHTML = `
-        <h2 style="color: #00d4ff; font-size: 2em; margin-bottom: 1rem;">💰 اربح الآن مع بوت التليجرام</h2>
-        <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 2rem;">
-            كل تسجيل يضيف لك نقاط لتحصل على جوائز حقيقية
-        </p>
-        
-        <button onclick="showTelegramBotInstructions()" style="
-            background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
-            color: #fff;
-            border: none;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
-        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(0, 212, 255, 0.4)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 20px rgba(0, 212, 255, 0.3)'">
-            🚀 انضم الآن وابدأ الربح
-        </button>
-    `;
-    
-    main.appendChild(telegramDiv);
 }
 
-// دالة عرض تعليمات بوت الربح
-function showTelegramBotInstructions() {
-    const root = document.getElementById('root');
-    root.innerHTML = `
-        <header>
-            <div class="header-container">
-                <div class="logo">✨ أسئلة أركان</div>
-                <button onclick="goBack()" style="
-                    background: linear-gradient(135deg, #d4af37 0%, #e6c200 100%);
-                    color: #000;
-                    border: none;
-                    padding: 0.75rem 1.5rem;
-                    border-radius: 50px;
-                    font-weight: bold;
-                    cursor: pointer;
-                ">← العودة</button>
-            </div>
-        </header>
-        
-        <main style="max-width: 900px; margin: 0 auto; padding: 3rem 2rem;">
-            <h1 style="color: #00d4ff; text-align: center; font-size: 2.5em; margin-bottom: 1rem;">💰 بوت الربح على التليجرام</h1>
-            
-            <section style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem;">
-                <h2 style="color: #00d4ff; margin-bottom: 1.5rem;">📋 كيفية الاستخدام:</h2>
-                <div style="display: grid; gap: 1.5rem;">
-                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
-                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">1️⃣ انضم للبوت</h3>
-                        <p style="color: #b0b0b0; margin: 0;">اضغط على رابط البوت وابدأ الدردشة</p>
-                    </div>
-                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
-                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">2️⃣ سجل بيانات</h3>
-                        <p style="color: #b0b0b0; margin: 0;">أكمل عملية التسجيل البسيطة والسريعة</p>
-                    </div>
-                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
-                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">3️⃣ اجمع النقاط</h3>
-                        <p style="color: #b0b0b0; margin: 0;">كل تسجيل يضيف نقاط لحسابك</p>
-                    </div>
-                    <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 0.5rem; border-left: 4px solid #00d4ff;">
-                        <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">4️⃣ احصل على جوائز</h3>
-                        <p style="color: #b0b0b0; margin: 0;">استبدل نقاطك بجوائز حقيقية</p>
-                    </div>
-                </div>
-            </section>
-            
-            <section style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 136, 204, 0.1)); border: 2px solid #00d4ff; border-radius: 1rem; padding: 2rem; text-align: center;">
-                <h2 style="color: #00d4ff; margin-bottom: 1rem;">🎁 المميزات:</h2>
-                <ul style="color: #b0b0b0; text-align: right; display: inline-block;">
-                    <li style="margin-bottom: 0.5rem;">✅ جوائز حقيقية وقيمة</li>
-                    <li style="margin-bottom: 0.5rem;">✅ عملية سهلة وسريعة</li>
-                    <li style="margin-bottom: 0.5rem;">✅ دعم عملاء متميز</li>
-                    <li style="margin-bottom: 0.5rem;">✅ آمن وموثوق</li>
-                </ul>
-            </section>
-            
-            <section style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 136, 204, 0.1)); border: 2px solid #00d4ff; border-radius: 1rem; padding: 2rem; text-align: center;">
-                <h2 style="color: #00d4ff; margin-bottom: 1rem;">🔗 انضم الآن</h2>
-                <p style="color: #b0b0b0; font-size: 1.1em; margin-bottom: 1.5rem;">
-                    اضغط على الزر أدناه للانضمام إلى بوت الربح
-                </p>
-                <a href="https://t.me/ArbahNowBot" target="_blank" style="
-                    display: inline-block;
-                    background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
-                    color: #fff;
-                    text-decoration: none;
-                    padding: 1rem 2.5rem;
-                    border-radius: 50px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    font-size: 1.1em;
-                    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
-                ">
-                    🚀 انضم إلى البوت الآن
-                </a>
-            </section>
-        </main>
-    `;
+// البحث عن الأسئلة
+function searchQuestions() {
+    const searchInput = document.querySelector('.search-box input');
+    const query = searchInput.value.toLowerCase();
+    
+    if (!query) return;
+    
+    const results = [];
+    for (const [category, questions] of Object.entries(questionsData)) {
+        if (category === 'poems') continue;
+        questions.forEach((q) => {
+            if (q.toLowerCase().includes(query)) {
+                results.push(q);
+            }
+        });
+    }
+    
+    if (results.length === 0) {
+        alert('لم يتم العثور على نتائج');
+        return;
+    }
+    
+    showQuestion(results[Math.floor(Math.random() * results.length)]);
 }
+
+// تهيئة الصفحة
+renderHome();
