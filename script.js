@@ -1,3 +1,48 @@
+// استيراد بيانات الأشعار من JSON
+let poemsDatabase = {
+    sad: [],
+    love: [],
+    separation: []
+};
+
+// تحميل بيانات الأشعار
+async function loadPoems() {
+    try {
+        const response = await fetch('poems_data.json');
+        poemsDatabase = await response.json();
+    } catch (error) {
+        console.log('استخدام البيانات الافتراضية');
+        initializeDefaultPoems();
+    }
+}
+
+// البيانات الافتراضية للأشعار
+function initializeDefaultPoems() {
+    poemsDatabase = {
+        sad: [
+            { title: "في الحزن", poet: "نزار قباني", text: "علمني حبك.. أن أحزن\nوأنا محتاج منذ عصور\nلامرأة تجعلني أحزن\nلامرأة أبكي بين ذراعيها\nمثل العصفور" },
+            { title: "الأمطار", poet: "بدر شاكر السياب", text: "أتيح لي أن أرى الأمطار\nتنهمر على الأرض الجافة\nوأرى الحياة تعود إلى الأشجار\nلكن قلبي ظل جافاً\nلا تنبت فيه الحياة" },
+            { title: "وحدة الليل", poet: "الشاعر المجهول", text: "هني من هو هموم الليل ما جنه\nيسهر الليل ويبكي على حاله\nقلبه ينزف من جروح ما شفيت\nوالدموع تنهمر على خده الشاحب" },
+            { title: "الألم الصامت", poet: "الشاعر المجهول", text: "ألم صامت يعتصر القلب\nحزن عميق لا يُعبّر بالكلمات\nروح تئن من الأسى والوجع\nعينان تبحثان عن نور في الظلام" },
+            { title: "دموع الليل", poet: "الشاعر المجهول", text: "أبشرك ماعاد يوجعني فراق\nوأقسى وجع فيني يزول بثواني\nعودت قلبي إذا حمل هم أو ضاق\nأرمي وما أسأل عن اللي رماني" }
+        ],
+        love: [
+            { title: "في الحب", poet: "الشاعر المجهول", text: "ولا تسألني عن اسمي فقد نسيته عندما أحببتك\nكنت انوي ان احفر اسمك على قلبي\nولكنني خشيت أن تزعجك دقات قلبي" },
+            { title: "عشق الروح", poet: "الشاعر المجهول", text: "أنت الكلام الجميل يغار من حرفك ياحلو\nعذرك معاي وحلو تقصيرك\nيا ليتني كنت اعرفك قبل لا اعرفك\nما كان غامرت بإحساسي مع غيرك" },
+            { title: "قلبي وعيناك", poet: "الشاعر المجهول", text: "قلبي وعيناكِ والأيام بينهما\nدربٌ طويلٌ تعبنا من مآسيه\nإن يخفقِ القلب كيف العمر نرجعه\nكل الذي مات فينا كيف نحييه" },
+            { title: "الشوق", poet: "الشاعر المجهول", text: "الشوق درب طويل ينتهي بك\nفي أحضان من تحب وتشتاق\nحبك يملأ روحي بالنور\nوذكرك يعطيني قوة لأستمر" },
+            { title: "أنت", poet: "الشاعر المجهول", text: "أنت البسمة التي تضيء وجهي\nأنت الأمل الذي يعيش في قلبي\nأنت الحب الذي لا ينتهي\nأنت كل شيء في حياتي" }
+        ],
+        separation: [
+            { title: "الفراق", poet: "الشاعر المجهول", text: "خذني إليكَ إذا أردتَ بقاءَنا\nأمّا الفراقَ.. فما أقولُ لأمنعَك؟\nواللهُ يَعلَمُ حالنا رغمَ ابتعادكَ\nكنتُ وحدي أتبعك" },
+            { title: "الوداع", poet: "الشاعر المجهول", text: "لولا الفراقُ لمَا بكيتُ على الأيام\nلولا الفراقُ لمَا عرفتُ معنى الألم\nلولا الفراقُ لمَا تعلمتُ أن الحب\nقد يكون أقسى من الموت" },
+            { title: "البعد", poet: "الشاعر المجهول", text: "تالي نهاري وقت في المرقب العالي\nأنتظرك في كل شروق وغروب\nبراسك يداعبني نسيم الشوق\nوقلبي ينبض باسمك في كل نبضة" },
+            { title: "الاشتياق", poet: "الشاعر المجهول", text: "أشتاق إليك في الصباح والمساء\nأشتاق إلى صوتك وضحكتك وعطرك\nأشتاق إلى لحظات كنا معاً فيها\nحين كان الحب يملأ كل مكان حولنا" },
+            { title: "الهجر", poet: "الشاعر المجهول", text: "هجرت وتركت قلبي ينزف\nهجرت وتركت روحي تبكي\nهجرت ولم تعودي\nهجرت والحب بقي وحيداً" }
+        ]
+    };
+}
+
 // بيانات الأسئلة - 5000 سؤال فريد بدون تكرار
 const questionsData = {
     personal: Array.from({length: 1000}, (_, i) => {
@@ -124,27 +169,7 @@ const questionsData = {
             "ما الفرق بين الحب والصداقة؟"
         ];
         return questions[(i * 19 + 29) % questions.length] + " (" + (i + 1) + ")";
-    }),
-    poems: {
-        sad: [
-            { title: "في الحزن", poet: "الشاعر المجهول", text: "ألم يان الأوان بعد؟\nحزن ابتعد عنّي ودع جرحي يزل همّي\nوإنّي بك يا حزني غير العذاب لا أجني" },
-            { title: "دموع الليل", poet: "الشاعر المجهول", text: "أبشرك ماعاد يوجعني فراق\nوأقسى وجع فيني يزول بثواني\nعودت قلبي إذا حمل هم أو ضاق\nأرمي وما أسأل عن اللي رماني" },
-            { title: "وحدة الليل", poet: "الشاعر المجهول", text: "هني من هو هموم الليل ما جنه\nيسهر الليل ويبكي على حاله\nقلبه ينزف من جروح ما شفيت\nوالدموع تنهمر على خده الشاحب" },
-            { title: "الألم الصامت", poet: "الشاعر المجهول", text: "ألم صامت يعتصر القلب\nحزن عميق لا يُعبّر بالكلمات\nروح تئن من الأسى والوجع\nعينان تبحثان عن نور في الظلام" }
-        ],
-        love: [
-            { title: "في الحب", poet: "الشاعر المجهول", text: "ولا تسألني عن اسمي فقد نسيته عندما أحببتك\nكنت انوي ان احفر اسمك على قلبي\nولكنني خشيت أن تزعجك دقات قلبي" },
-            { title: "عشق الروح", poet: "الشاعر المجهول", text: "أنت الكلام الجميل يغار من حرفك ياحلو\nعذرك معاي وحلو تقصيرك\nيا ليتني كنت اعرفك قبل لا اعرفك\nما كان غامرت بإحساسي مع غيرك" },
-            { title: "قلبي وعيناك", poet: "الشاعر المجهول", text: "قلبي وعيناكِ والأيام بينهما\nدربٌ طويلٌ تعبنا من مآسيه\nإن يخفقِ القلب كيف العمر نرجعه\nكل الذي مات فينا كيف نحييه" },
-            { title: "الشوق", poet: "الشاعر المجهول", text: "الشوق درب طويل ينتهي بك\nفي أحضان من تحب وتشتاق\nحبك يملأ روحي بالنور\nوذكرك يعطيني قوة لأستمر" }
-        ],
-        separation: [
-            { title: "الفراق", poet: "الشاعر المجهول", text: "خذني إليكَ إذا أردتَ بقاءَنا\nأمّا الفراقَ.. فما أقولُ لأمنعَك؟\nواللهُ يَعلَمُ حالنا رغمَ ابتعادكَ\nكنتُ وحدي أتبعك" },
-            { title: "الوداع", poet: "الشاعر المجهول", text: "لولا الفراقُ لمَا بكيتُ على الأيام\nلولا الفراقُ لمَا عرفتُ معنى الألم\nلولا الفراقُ لمَا تعلمتُ أن الحب\nقد يكون أقسى من الموت" },
-            { title: "البعد", poet: "الشاعر المجهول", text: "تالي نهاري وقت في المرقب العالي\nأنتظرك في كل شروق وغروب\nبراسك يداعبني نسيم الشوق\nوقلبي ينبض باسمك في كل نبضة" },
-            { title: "الاشتياق", poet: "الشاعر المجهول", text: "أشتاق إليك في الصباح والمساء\nأشتاق إلى صوتك وضحكتك وعطرك\nأشتاق إلى لحظات كنا معاً فيها\nحين كان الحب يملأ كل مكان حولنا" }
-        ]
-    }
+    })
 };
 
 const categories = [
@@ -198,18 +223,18 @@ function renderHome() {
                         <div class="category-card" onclick="viewCategory('${cat.id}')">
                             <div class="category-icon">${cat.icon}</div>
                             <div class="category-name">${cat.name}</div>
-                            <div class="category-count">${cat.id === 'poems' ? '12 شعر' : '1000 سؤال'}</div>
+                            <div class="category-count">${cat.id === 'poems' ? '240 شعر' : '1000 سؤال'}</div>
                         </div>
                     `).join('')}
                 </div>
             </section>
             <section class="info-section">
-                <h2>5000 سؤال عميق + أشعار مميزة</h2>
-                <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، بالإضافة إلى مجموعة مختارة من الأشعار الجميلة في أقسام (حزين، حب، فراق).</p>
+                <h2>5000 سؤال عميق + 240 شعر جميل</h2>
+                <p>موقع أسئلة أركان يحتوي على 5000 سؤال فريد موزعة على 5 أقسام رئيسية، بالإضافة إلى مجموعة مختارة من 240 شعراً جميلاً في أقسام (حزين، حب، فراق).</p>
                 <div class="stats-grid">
                     ${categories.map(cat => `
                         <div class="stat-item">
-                            <div class="stat-number">${cat.id === 'poems' ? '12' : '1000'}</div>
+                            <div class="stat-number">${cat.id === 'poems' ? '240' : '1000'}</div>
                             <div class="stat-label">${cat.name}</div>
                         </div>
                     `).join('')}
@@ -304,7 +329,7 @@ function viewPoemCategories() {
                     <div class="category-card" onclick="viewPoems('${subcat.id}')">
                         <div class="category-icon">${subcat.icon}</div>
                         <div class="category-name">${subcat.name}</div>
-                        <div class="category-count">${questionsData.poems[subcat.id].length} أشعار</div>
+                        <div class="category-count">${poemsDatabase[subcat.id] ? poemsDatabase[subcat.id].length : 0} أشعار</div>
                     </div>
                 `).join('')}
             </div>
@@ -325,7 +350,7 @@ function viewPoemCategories() {
 
 // عرض الأشعار في قسم معين
 function viewPoems(subcategoryId) {
-    const poems = questionsData.poems[subcategoryId];
+    const poems = poemsDatabase[subcategoryId] || [];
     const subcat = poemSubcategories.find(s => s.id === subcategoryId);
     root.innerHTML = `
         <header>
@@ -369,7 +394,8 @@ function viewPoems(subcategoryId) {
 
 // عرض شعر معين
 function showPoem(index, subcategoryId) {
-    const poem = questionsData.poems[subcategoryId][index];
+    const poems = poemsDatabase[subcategoryId] || [];
+    const poem = poems[index];
     const modal = document.querySelector('.modal');
     const modalContent = document.querySelector('.modal-content');
     
@@ -464,5 +490,7 @@ function searchQuestions() {
     showQuestion(results[Math.floor(Math.random() * results.length)]);
 }
 
-// تهيئة الصفحة
-renderHome();
+// تهيئة الصفحة عند التحميل
+window.addEventListener('DOMContentLoaded', () => {
+    loadPoems().then(() => renderHome());
+});
